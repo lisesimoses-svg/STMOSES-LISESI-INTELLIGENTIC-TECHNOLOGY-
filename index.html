@@ -1367,7 +1367,172 @@ drawExams();
 })();
 </script>
 <!-- END ST-MIS CLASS, FEE AND EXAM UPDATE -->
+<!-- ST-MIS EXAMINATION FULL EDIT UPGRADE -->
+<style>
+#stmisExamEditModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:rgba(0,0,0,.75);
+  padding:15px;
+  overflow:auto;
+}
+#stmisExamEditModal .exam-edit-box{
+  max-width:500px;
+  margin:25px auto;
+  background:white;
+  color:#222;
+  padding:20px;
+  border-radius:14px;
+}
+#stmisExamEditModal input,
+#stmisExamEditModal select{
+  display:block;
+  width:100%;
+  box-sizing:border-box;
+  padding:12px;
+  margin:7px 0 14px;
+  border:1px solid #bbb;
+  border-radius:7px;
+  background:white;
+  color:#222;
+}
+#stmisExamEditModal button{
+  padding:12px;
+  border:0;
+  border-radius:7px;
+  margin:5px;
+  cursor:pointer;
+}
+</style>
 
+<div id="stmisExamEditModal">
+ <div class="exam-edit-box">
+  <h2>EDIT EXAMINATION</h2>
+  <form id="stmisExamEditForm">
+   <label>Student Name</label>
+   <input id="stxStudent" required>
+
+   <label>Class</label>
+   <input id="stxClass">
+
+   <label>Examination Name</label>
+   <input id="stxExamName" required>
+
+   <label>Subject</label>
+   <input id="stxSubject" required>
+
+   <label>Marks Obtained (0–50)</label>
+   <input id="stxMarks" type="number" min="0" max="50" required>
+
+   <label>Examination Date</label>
+   <input id="stxDate" type="date">
+
+   <button type="submit" style="background:#087b43;color:white">
+    SAVE CHANGES
+   </button>
+   <button type="button"
+    onclick="document.getElementById('stmisExamEditModal').style.display='none'"
+    style="background:#777;color:white">
+    CANCEL
+   </button>
+  </form>
+ </div>
+</div>
+
+<script>
+(function(){
+ let currentExam=null;
+
+ function getExams(){
+   if(window.db && Array.isArray(db.exams)) return db.exams;
+   if(Array.isArray(window.exams)) return window.exams;
+   return [];
+ }
+
+ function getValue(obj, keys){
+   for(const key of keys){
+     if(obj[key] !== undefined && obj[key] !== null) return obj[key];
+   }
+   return "";
+ }
+
+ function setValue(obj, keys, value, fallback){
+   let key=keys.find(k=>Object.prototype.hasOwnProperty.call(obj,k));
+   obj[key || fallback]=value;
+ }
+
+ window.stxEditExam=function(id){
+   const exams=getExams();
+   currentExam=exams.find(e=>String(e.id)===String(id));
+
+   if(!currentExam){
+     alert("Examination record not found.");
+     return;
+   }
+
+   document.getElementById("stxStudent").value=
+    getValue(currentExam,["student","studentName","name"]);
+
+   document.getElementById("stxClass").value=
+    getValue(currentExam,["cls","class","className"]);
+
+   document.getElementById("stxExamName").value=
+    getValue(currentExam,["exam","examName","nameOfExam"]);
+
+   document.getElementById("stxSubject").value=
+    getValue(currentExam,["subject","subjectName"]);
+
+   document.getElementById("stxMarks").value=
+    getValue(currentExam,["marks","score","mark"]);
+
+   document.getElementById("stxDate").value=
+    getValue(currentExam,["date","examDate"]);
+
+   document.getElementById("stmisExamEditModal").style.display="block";
+ };
+
+ document.getElementById("stmisExamEditForm")
+ .addEventListener("submit",function(e){
+   e.preventDefault();
+   if(!currentExam) return;
+
+   const marks=Number(document.getElementById("stxMarks").value);
+
+   if(!Number.isFinite(marks) || marks<0 || marks>50){
+     alert("Marks must be between 0 and 50.");
+     return;
+   }
+
+   setValue(currentExam,["student","studentName","name"],
+     document.getElementById("stxStudent").value,"student");
+
+   setValue(currentExam,["cls","class","className"],
+     document.getElementById("stxClass").value,"cls");
+
+   setValue(currentExam,["exam","examName","nameOfExam"],
+     document.getElementById("stxExamName").value,"exam");
+
+   setValue(currentExam,["subject","subjectName"],
+     document.getElementById("stxSubject").value,"subject");
+
+   setValue(currentExam,["marks","score","mark"],
+     marks,"marks");
+
+   setValue(currentExam,["date","examDate"],
+     document.getElementById("stxDate").value,"date");
+
+   if(typeof window.saveData==="function") window.saveData();
+   if(typeof window.renderAll==="function") window.renderAll();
+   if(typeof window.drawExams==="function") window.drawExams();
+
+   document.getElementById("stmisExamEditModal").style.display="none";
+   alert("Examination updated successfully!");
+ });
+})();
+</script>
+<!-- END ST-MIS EXAMINATION EDIT UPGRADE -->
 </body>
  </html>
  
