@@ -4,897 +4,384 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ST-MIS | ST Moses Intelligent School Management</title>
+<title>ST-MIS | School Management System</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <style>
-:root {
- --blue:#b9e5ff;
- --dark:#07558a;
- --yellow:#ffdf35;
- --white:#ffffff;
-}
+:root{--bg:#080a0e;--panel:#151922;--gold:#ffd700;--line:#393e49;--white:#fff}
 *{box-sizing:border-box}
-body{
- margin:0;font-family:Arial,sans-serif;
- background:#c9edff;color:#15334a;
-}
-header{
- background:linear-gradient(120deg,#0875b5,#b4e7ff);
- padding:18px;color:var(--yellow);
- position:relative;
-}
-.top{
- display:flex;align-items:center;
- justify-content:space-between;gap:12px;
-}
-.top h1{margin:0;font-size:24px}
-.top p{margin:6px 0;color:white;font-size:12px}
-.menuBtn{
- background:#07558a;color:#ffdf35;
- border:2px solid #ffdf35;border-radius:9px;
- padding:8px 15px;font-size:25px;
-}
-.robot{
- display:flex;align-items:center;gap:15px;
- margin-top:16px;background:#07558a;
- border-radius:14px;padding:12px;
-}
-.robot svg{width:90px;flex-shrink:0}
-.robot h2{color:var(--yellow);font-size:17px}
-.robot p{color:white;font-size:12px}
-.drawer{
- display:none;position:absolute;right:12px;top:65px;
- z-index:20;background:#07558a;
- border:2px solid var(--yellow);border-radius:12px;
- padding:10px;width:225px;box-shadow:0 5px 20px #0004;
-}
+body{margin:0;background:var(--bg);color:var(--white);font-family:Arial,sans-serif}
+header{background:linear-gradient(120deg,#050505,#30260a);border-bottom:2px solid var(--gold);padding:16px;position:relative}
+.top{display:flex;justify-content:space-between;align-items:center}
+h1,h2,h3{color:var(--gold)}
+h1{margin:0;font-size:26px}
+header p{font-size:11px;color:#ccc}
+.menuBtn{background:var(--gold);border:0;border-radius:8px;padding:10px 15px;font-size:24px}
+.drawer{display:none;position:absolute;right:12px;top:65px;z-index:20;background:var(--panel);border:1px solid var(--gold);border-radius:10px;width:235px;padding:10px}
 .drawer.open{display:block}
-.drawer button{
- display:block;width:100%;padding:13px;margin:3px 0;
- text-align:left;background:transparent;
- color:var(--yellow);border:0;
- border-bottom:1px solid #ffffff44;font-weight:bold;
-}
-main{max-width:1150px;margin:auto;padding:15px}
-.page{display:none}
-.page.active{display:block}
-.card{
- background:#eaf8ff;border:1px solid #8bcdf4;
- border-radius:14px;padding:16px;margin-bottom:15px;
- box-shadow:0 3px 10px #07558a12;
-}
-h2,h3{color:#07558a}
-label{font-size:13px;font-weight:bold;color:#07558a}
-input,select{
- width:100%;padding:12px;margin:6px 0 12px;
- border:1px solid #80bfe5;border-radius:8px;
- background:white;color:#123;
-}
+.drawer button{display:block;width:100%;padding:13px;background:transparent;color:var(--gold);border:0;border-bottom:1px solid var(--line);text-align:left;font-weight:bold}
+.hero{display:flex;align-items:center;gap:15px;background:#171b24;border:1px solid #806819;border-radius:12px;padding:12px;margin-top:15px}
+.robot{font-size:48px}
+.hero p{color:#ccc;font-size:12px}
+main{max-width:1200px;margin:auto;padding:15px}
+.page{display:none}.page.active{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:15px}
+label{display:block;color:var(--gold);font-size:13px;font-weight:bold;margin-top:10px}
+input,select,textarea{width:100%;padding:12px;margin:6px 0 12px;background:#0b0e14;color:white;border:1px solid #505665;border-radius:7px}
+input[type=file]{padding:9px}
 button{cursor:pointer}
-.primary{
- background:#07558a;color:var(--yellow);
- border:0;border-radius:8px;padding:12px 16px;
- font-weight:bold;margin:3px;
-}
-.edit{
- background:#ffdf35;color:#123;border:0;
- border-radius:6px;padding:8px;
-}
-.promote{
- background:#087b58;color:white;border:0;
- border-radius:6px;padding:8px;
-}
-.danger{
- background:#b52c35;color:white;border:0;
- border-radius:6px;padding:8px;
-}
-.stats,.classGrid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(135px,1fr));
- gap:12px;
-}
-.stat,.classCard{
- background:#07558a;color:var(--yellow);
- padding:17px;border-radius:12px;text-align:center;
-}
-.stat strong,.classCard strong{
- display:block;font-size:27px;margin-bottom:6px;
-}
-.classCard{
- border:2px solid #ffdf35;min-height:110px;
-}
-.classCard button{
- background:transparent;color:var(--yellow);
- border:0;width:100%;font-weight:bold;font-size:14px;
-}
+.btn{background:var(--gold);color:#090909;border:0;border-radius:7px;padding:11px 14px;font-weight:bold;margin:3px}
+.btn2{background:#252c39;color:var(--gold);border:1px solid var(--gold);border-radius:7px;padding:9px;margin:2px}
+.del{background:#a52a2a;color:white;border:0;border-radius:6px;padding:8px;margin:2px}
+.up{background:#087b58;color:white;border:0;border-radius:6px;padding:8px;margin:2px}
+.stats,.classGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:11px}
+.stat,.classCard{background:linear-gradient(145deg,#30270b,#171b24);border:1px solid var(--gold);border-radius:10px;padding:16px;text-align:center;color:var(--gold)}
+.stat strong,.classCard strong{display:block;font-size:24px;margin-bottom:7px}
+.classCard button{background:transparent;color:var(--gold);border:0;font-weight:bold}
 .tablewrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:650px}
-th,td{
- padding:10px;text-align:left;
- border-bottom:1px solid #c5e3f4;
-}
-th{background:#07558a;color:var(--yellow)}
-.photo{
- width:125px;height:125px;border-radius:50%;
- object-fit:cover;border:4px solid #ffdf35;
-}
-.note{font-size:12px;color:#536c80}
-footer{
- text-align:center;padding:20px;
- color:#07558a;font-size:12px;
-}
+table{width:100%;min-width:650px;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+th{background:#30270b;color:var(--gold)}
+.thumb{width:48px;height:58px;object-fit:cover;border:1px solid var(--gold);border-radius:5px}
+.passport{width:110px;height:140px;object-fit:cover;border:2px solid var(--gold);border-radius:7px;background:#222;display:block;margin:8px 0}
+.note{font-size:12px;color:#bbb;line-height:1.5}
+.item{background:#10141c;border:1px solid var(--line);border-radius:8px;padding:12px;margin:9px 0}
+.good{color:#42d69a}.bad{color:#ff7777}.partial{color:#ffd45b}
+footer{text-align:center;color:var(--gold);padding:20px}
+@media print{header,footer,.noPrint,button{display:none!important}body{background:white;color:black}.card{background:white;color:black}h2,th,td{color:black}}
 </style>
 </head>
 <body>
 
 <header>
  <div class="top">
-  <div>
-   <h1>ST-MIS</h1>
-   <p>ST MOSES INTELLIGENT SCHOOL MANAGEMENT SYSTEM</p>
-  </div>
+  <div><h1>ST-MIS</h1><p>ST MOSES INTELLIGENT SCHOOL MANAGEMENT SYSTEM</p></div>
   <button class="menuBtn" onclick="toggleMenu()">☰</button>
  </div>
-
  <div id="drawer" class="drawer">
-  <button onclick="showPage('home')">🏠 Dashboard</button>
-  <button onclick="showPage('students')">👨‍🎓 Wanafunzi</button>
-  <button onclick="showPage('teachers')">👩‍🏫 Walimu</button>
-  <button onclick="showPage('templates')">📊 Excel Templates</button>
-  <button onclick="showPage('principal')">👤 Mkuu wa shule</button>
+  <button onclick="showPage('home')">🏠 DASHBOARD</button>
+  <button onclick="showPage('students')">🎓 WANAFUNZI</button>
+  <button onclick="showPage('teachers')">👨‍🏫 WALIMU</button>
+  <button onclick="showPage('fees')">💰 ADA ZA WANAFUNZI</button>
+  <button onclick="showPage('reports')">📁 RIPOTI ZA WANAFUNZI</button>
+  <button onclick="showPage('excel')">📊 EXCEL</button>
+  <button onclick="showPage('principal')">👤 MKUU WA SHULE</button>
  </div>
-
- <div class="robot">
-  <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-   <rect x="23" y="28" width="74" height="66" rx="18" fill="#d9f4ff" stroke="#39b8ef" stroke-width="4"/>
-   <rect x="34" y="42" width="52" height="29" rx="10" fill="#082b50"/>
-   <circle cx="48" cy="56" r="5" fill="#36e5ff"/>
-   <circle cx="72" cy="56" r="5" fill="#36e5ff"/>
-   <path d="M48 80 Q60 90 72 80" fill="none" stroke="#1689b8" stroke-width="4"/>
-   <path d="M60 28 V15 M51 15 H69" stroke="#39b8ef" stroke-width="4"/>
-   <circle cx="60" cy="11" r="5" fill="#36e5ff"/>
-   <path d="M23 48 H12 V77 H23 M97 48 H108 V77 H97" fill="none" stroke="#39b8ef" stroke-width="5"/>
-   <path d="M42 94 V108 M78 94 V108" stroke="#39b8ef" stroke-width="7"/>
-  </svg>
-  <div>
-   <h2>INTELLIGENT TECHNOLOGY</h2>
-   <p>Digital School Management • Smart Education</p>
-  </div>
+ <div class="hero">
+  <div class="robot">🤖</div>
+  <div><h2>INTELLIGENT TECHNOLOGY</h2><p>Smart School • Digital Education • Student Management</p></div>
  </div>
 </header>
 
 <main>
 
-<!-- DASHBOARD -->
 <section id="home" class="page active">
  <div class="card">
-  <h2>Dashboard</h2>
+  <h2>✦ SCHOOL DASHBOARD</h2>
   <div class="stats">
    <div class="stat"><strong id="totalStudents">0</strong>Wanafunzi</div>
    <div class="stat"><strong id="totalTeachers">0</strong>Walimu</div>
    <div class="stat"><strong>5</strong>Madarasa</div>
+   <div class="stat"><strong id="totalReports">0</strong>Ripoti</div>
+   <div class="stat"><strong id="expectedFees">0</strong>Ada zinazotakiwa</div>
+   <div class="stat"><strong id="collectedFees">0</strong>Ada zilizolipwa</div>
+   <div class="stat"><strong id="feeDebt">0</strong>Madeni</div>
   </div>
  </div>
-
- <div class="card">
-  <h2>Madarasa ya shule</h2>
-  <p>Chagua darasa kuona wanafunzi wake.</p>
-  <div class="classGrid" id="classGrid"></div>
- </div>
-
- <div class="card">
-  <h2>Karibu ST-MIS</h2>
-  <p>Usimamizi wa shule kwa teknolojia ya kisasa.</p>
- </div>
+ <div class="card"><h2>✦ MADARASA</h2><p class="note">Chagua darasa kuona wanafunzi wake.</p><div id="classGrid" class="classGrid"></div></div>
+ <div class="card"><h2>KARIBU ST-MIS</h2><button class="btn" onclick="showPage('students')">+ Sajili mwanafunzi</button><button class="btn" onclick="showPage('fees')">Fungua ada</button></div>
 </section>
 
-<!-- WANAFUNZI -->
 <section id="students" class="page">
  <div class="card">
-  <h2 id="studentFormTitle">Usajili wa mwanafunzi</h2>
-
-  <label>Jina kamili</label>
-  <input id="sname" placeholder="Jina la mwanafunzi">
-
-  <label>Jinsia</label>
-  <select id="sgender">
-   <option value="">Chagua jinsia</option>
-   <option>Mwanaume</option>
-   <option>Mwanamke</option>
-  </select>
-
-  <label>Darasa</label>
-  <select id="sclass"></select>
-
-  <label>Mzazi/Mlezi</label>
-  <input id="sguardian" placeholder="Jina la mzazi au mlezi">
-
-  <label>Simu ya mzazi/mlezi</label>
-  <input id="sphone" placeholder="Namba ya simu">
-
+  <h2 id="studentTitle">✦ USAJILI WA MWANAFUNZI</h2>
+  <label>Picha ya mwanafunzi – Passport size</label>
+  <img id="studentPreview" class="passport" alt="Picha ya mwanafunzi">
+  <input id="studentPhotoFile" type="file" accept="image/*" onchange="previewStudentPhoto(event)">
+  <label>Jina kamili</label><input id="sname" placeholder="Jina la mwanafunzi">
+  <label>Jinsia</label><select id="sgender"><option value="">Chagua jinsia</option><option>Mwanaume</option><option>Mwanamke</option></select>
+  <label>Darasa</label><select id="sclass"></select>
+  <label>Mzazi/Mlezi</label><input id="sguardian" placeholder="Jina la mzazi">
+  <label>Simu ya mzazi</label><input id="sphone" placeholder="Namba ya simu">
   <input type="hidden" id="sedit">
-
-  <button class="primary" onclick="saveStudent()">HIFADHI MWANAFUNZI</button>
-  <button class="edit" onclick="clearStudent()">FUTA FOMU</button>
+  <button class="btn" onclick="saveStudent()">HIFADHI MWANAFUNZI</button>
+  <button class="btn2" onclick="clearStudent()">FUTA FOMU</button>
  </div>
-
  <div class="card">
-  <h2 id="listTitle">Orodha ya wanafunzi wote</h2>
+  <h2 id="listTitle">✦ ORODHA YA WANAFUNZI</h2>
   <input id="studentSearch" placeholder="Tafuta mwanafunzi..." oninput="renderStudents()">
-  <div class="tablewrap">
-   <table>
-    <thead>
-     <tr>
-      <th>Jina</th><th>Jinsia</th><th>Darasa</th>
-      <th>Mlezi</th><th>Simu</th><th>Vitendo</th>
-     </tr>
-    </thead>
-    <tbody id="studentRows"></tbody>
-   </table>
-  </div>
+  <div class="tablewrap"><table>
+   <thead><tr><th>Picha</th><th>Jina</th><th>Jinsia</th><th>Darasa</th><th>Mzazi</th><th>Simu</th><th>Vitendo</th></tr></thead>
+   <tbody id="studentRows"></tbody>
+  </table></div>
  </div>
 </section>
 
-<!-- WALIMU -->
 <section id="teachers" class="page">
  <div class="card">
-  <h2>Usajili wa mwalimu</h2>
-  <label>Jina kamili</label>
-  <input id="tname" placeholder="Jina la mwalimu">
-  <label>Somo/majukumu</label>
-  <input id="tsubject" placeholder="Somo au majukumu">
-  <label>Namba ya simu</label>
-  <input id="tphone" placeholder="Namba ya simu">
+  <h2>✦ USAJILI WA MWALIMU</h2>
+  <label>Jina kamili</label><input id="tname">
+  <label>Somo/Majukumu</label><input id="tsubject">
+  <label>Simu</label><input id="tphone">
   <input type="hidden" id="tedit">
-  <button class="primary" onclick="saveTeacher()">HIFADHI MWALIMU</button>
+  <button class="btn" onclick="saveTeacher()">HIFADHI MWALIMU</button>
  </div>
-
- <div class="card">
-  <h2>Orodha ya walimu</h2>
-  <div class="tablewrap">
-   <table>
-    <thead>
-     <tr><th>Jina</th><th>Somo</th><th>Simu</th><th>Vitendo</th></tr>
-    </thead>
-    <tbody id="teacherRows"></tbody>
-   </table>
-  </div>
+ <div class="card"><h2>✦ ORODHA YA WALIMU</h2>
+  <div class="tablewrap"><table>
+   <thead><tr><th>Jina</th><th>Somo</th><th>Simu</th><th>Vitendo</th></tr></thead>
+   <tbody id="teacherRows"></tbody>
+  </table></div>
  </div>
 </section>
 
-<!-- EXCEL -->
-<section id="templates" class="page">
+<section id="fees" class="page">
  <div class="card">
-  <h2>Excel Templates</h2>
-  <p>Pakua templeti, jaza taarifa kwenye Excel, kisha pakia faili hapa.</p>
+  <h2>✦ USAJILI NA MALIPO YA ADA</h2>
+  <label>Chagua mwanafunzi</label><select id="feeStudent" onchange="loadFeeStudent()"></select>
+  <label>Ada inayotakiwa (TSh)</label><input id="feeExpected" type="number" min="0" placeholder="Mfano 300000">
+  <label>Kiasi alicholipa (TSh)</label><input id="feePaid" type="number" min="0" placeholder="Mfano 100000">
+  <label>Tarehe ya malipo</label><input id="feeDate" type="date">
+  <label>Maelezo ya malipo</label><input id="feeNote" placeholder="Mfano: Malipo ya awali">
+  <button class="btn" onclick="saveFee()">HIFADHI TAARIFA ZA ADA</button>
+  <button class="btn2" onclick="clearFeeForm()">FUTA FOMU</button>
+  <p class="note">Kiasi alicholipa ni jumla ya malipo yote hadi sasa. Unaporekodi malipo mapya, ongeza kwenye kiasi cha awali.</p>
+ </div>
+ <div class="card">
+  <h2>✦ TAARIFA ZA ADA</h2>
+  <input id="feeSearch" placeholder="Tafuta mwanafunzi..." oninput="renderFees()">
+  <div class="tablewrap"><table>
+   <thead><tr><th>Mwanafunzi</th><th>Darasa</th><th>Ada</th><th>Amelipa</th><th>Salio</th><th>Hali</th><th>Tarehe</th><th>Vitendo</th></tr></thead>
+   <tbody id="feeRows"></tbody>
+  </table></div>
+  <button class="btn noPrint" onclick="printFees()">CHAPISHA TAARIFA ZA ADA</button>
+ </div>
+</section>
 
+<section id="reports" class="page">
+ <div class="card">
+  <h2>✦ KUINGIZA RIPOTI YA MWANAFUNZI</h2>
+  <label>Chagua mwanafunzi</label><select id="reportStudent"></select>
+  <label>Aina ya ripoti</label>
+  <select id="reportType"><option>Matokeo</option><option>Maendeleo</option><option>Mahudhurio</option><option>Ripoti nyingine</option></select>
+  <label>Maelezo</label><input id="reportDescription" placeholder="Mfano: Muhula wa kwanza 2026">
+  <label>Pakia ripoti (PDF, Word au picha)</label>
+  <input id="reportFile" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+  <button class="btn" onclick="uploadReport()">PAKIA RIPOTI</button>
+  <p class="note">Kwa toleo hili ukubwa wa faili moja usizidi 1 MB.</p>
+ </div>
+ <div class="card"><h2>✦ RIPOTI ZILIZOHIFADHIWA</h2>
+  <input id="reportSearch" placeholder="Tafuta ripoti..." oninput="renderReports()">
+  <div id="reportList"></div>
+ </div>
+</section>
+
+<section id="excel" class="page">
+ <div class="card">
+  <h2>✦ EXCEL DATA MANAGEMENT</h2>
   <h3>Templeti ya wanafunzi</h3>
-  <button class="primary" onclick="downloadTemplate('students')">⬇ Pakua Excel ya wanafunzi</button>
+  <button class="btn" onclick="downloadTemplate('students')">PAKUA EXCEL</button>
   <input type="file" accept=".xlsx,.xls" onchange="importExcel(event,'students')">
-
   <h3>Templeti ya walimu</h3>
-  <button class="primary" onclick="downloadTemplate('teachers')">⬇ Pakua Excel ya walimu</button>
+  <button class="btn" onclick="downloadTemplate('teachers')">PAKUA EXCEL</button>
   <input type="file" accept=".xlsx,.xls" onchange="importExcel(event,'teachers')">
-
-  <p class="note">Excel inahitaji intaneti ili huduma ya kutengeneza na kusoma faili ifanye kazi.</p>
  </div>
 </section>
 
-<!-- MKUU WA SHULE -->
 <section id="principal" class="page">
  <div class="card">
-  <h2>Wasifu wa mkuu wa shule</h2>
-  <img id="principalPhoto" class="photo" alt="Picha ya mkuu wa shule">
-  <label>Picha ya mkuu wa shule</label>
-  <input type="file" accept="image/*" onchange="savePrincipalPhoto(event)">
-
-  <label>Jina la mkuu wa shule</label>
-  <input id="principalName" placeholder="Jina kamili">
-
-  <label>Jina la shule</label>
-  <input id="schoolName" placeholder="Jina la shule">
-
-  <label>Namba ya simu</label>
-  <input id="principalPhone" placeholder="Namba ya simu">
-
-  <button class="primary" onclick="savePrincipal()">HIFADHI TAARIFA</button>
+  <h2>✦ WASIFU WA MKUU WA SHULE</h2>
+  <img id="principalPhoto" class="passport" alt="Picha ya mkuu wa shule">
+  <label>Picha ya mkuu wa shule</label><input type="file" accept="image/*" onchange="savePrincipalPhoto(event)">
+  <label>Jina la mkuu</label><input id="principalName">
+  <label>Jina la shule</label><input id="schoolName">
+  <label>Namba ya simu</label><input id="principalPhone">
+  <button class="btn" onclick="savePrincipal()">HIFADHI TAARIFA</button>
   <p id="principalMessage"></p>
  </div>
 </section>
-
 </main>
-
-<footer>ST-MIS | ST Moses Intelligent School Management System</footer>
-
-<script>
-const classes=[
- 'Awali',
- 'Darasa la Kwanza',
- 'Darasa la Pili',
- 'Darasa la Tatu',
- 'Darasa la Nne'
-];
-
-let students=JSON.parse(localStorage.getItem('stmis_students')||'[]');
-let teachers=JSON.parse(localStorage.getItem('stmis_teachers')||'[]');
-let selectedClass='';
-
-function el(id){return document.getElementById(id)}
-
-function toggleMenu(){
- el('drawer').classList.toggle('open');
-}
-
-function showPage(id){
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
- el(id).classList.add('active');
- el('drawer').classList.remove('open');
- if(id==='students'){
-  selectedClass='';
-  el('listTitle').textContent='Orodha ya wanafunzi wote';
-  renderStudents();
- }
-}
-
-function saveData(){
- localStorage.setItem('stmis_students',JSON.stringify(students));
- localStorage.setItem('stmis_teachers',JSON.stringify(teachers));
- el('totalStudents').textContent=students.length;
- el('totalTeachers').textContent=teachers.length;
-}
-
-function buildClasses(){
- el('sclass').innerHTML=classes.map(c=>
-  `<option value="${c}">${c}</option>`
- ).join('');
-
- el('classGrid').innerHTML=classes.map(c=>{
-  let count=students.filter(s=>s.cls===c).length;
-  return `<div class="classCard">
-   <strong>${count}</strong>
-   <button onclick="openClass('${c}')">${c}</button>
-  </div>`;
- }).join('');
-}
-
-function openClass(c){
- selectedClass=c;
- showPage('students');
- selectedClass=c;
- el('listTitle').textContent='Wanafunzi: '+c;
- renderStudents();
-}
-
-function saveStudent(){
- let name=el('sname').value.trim();
- if(!name)return alert('Tafadhali weka jina la mwanafunzi.');
-
- let id=el('sedit').value;
- let item={
-  name:name,
-  gender:el('sgender').value,
-  cls:el('sclass').value,
-  guardian:el('sguardian').value,
-  phone:el('sphone').value
- };
-
- if(id!=='')students[Number(id)]=item;
- else students.push(item);
-
- clearStudent();
- saveData();
- buildClasses();
- renderStudents();
- alert('Mwanafunzi amehifadhiwa.');
-}
-
-function clearStudent(){
- ['sname','sgender','sguardian','sphone','sedit'].forEach(id=>el(id).value='');
- el('sclass').value=classes[0];
- el('studentFormTitle').textContent='Usajili wa mwanafunzi';
-}
-
-function renderStudents(){
- let q=el('studentSearch').value.toLowerCase();
- el('studentRows').innerHTML='';
-
- students.forEach((s,i)=>{
-  if(selectedClass&&s.cls!==selectedClass)return;
-  if(!String(s.name).toLowerCase().includes(q))return;
-
-  el('studentRows').innerHTML+=`
-   <tr>
-    <td>${safe(s.name)}</td>
-    <td>${safe(s.gender)}</td>
-    <td>${safe(s.cls)}</td>
-    <td>${safe(s.guardian)}</td>
-    <td>${safe(s.phone)}</td>
-    <td>
-     <button class="edit" onclick="editStudent(${i})">✏️</button>
-     <button class="promote" onclick="promoteStudent(${i})">⬆️</button>
-     <button class="danger" onclick="deleteStudent(${i})">🗑️</button>
-    </td>
-   </tr>`;
- });
-}
-
-function editStudent(i){
- let s=students[i];
- el('sname').value=s.name;
- el('sgender').value=s.gender;
- el('sclass').value=s.cls;
- el('sguardian').value=s.guardian;
- el('sphone').value=s.phone;
- el('sedit').value=i;
- el('studentFormTitle').textContent='Hariri taarifa za mwanafunzi';
- window.scrollTo(0,0);
-}
-
-function promoteStudent(i){
- let n=classes.indexOf(students[i].cls);
- if(n<0||n===classes.length-1){
-  return alert('Mwanafunzi yuko darasa la mwisho.');
- }
- students[i].cls=classes[n+1];
- saveData();
- buildClasses();
- renderStudents();
- alert('Amepandishwa kwenda '+students[i].cls);
-}
-
-function deleteStudent(i){
- if(confirm('Una uhakika wa kufuta mwanafunzi?')){
-  students.splice(i,1);
-  saveData();
-  buildClasses();
-  renderStudents();
- }
-}
-
-function saveTeacher(){
- let name=el('tname').value.trim();
- if(!name)return alert('Weka jina la mwalimu.');
-
- let id=el('tedit').value;
- let item={
-  name:name,
-  subject:el('tsubject').value,
-  phone:el('tphone').value
- };
-
- if(id!=='')teachers[Number(id)]=item;
- else teachers.push(item);
-
- ['tname','tsubject','tphone','tedit'].forEach(x=>el(x).value='');
- saveData();
- renderTeachers();
- alert('Mwalimu amehifadhiwa.');
-}
-
-function renderTeachers(){
- el('teacherRows').innerHTML='';
- teachers.forEach((t,i)=>{
-  el('teacherRows').innerHTML+=`
-   <tr>
-    <td>${safe(t.name)}</td>
-    <td>${safe(t.subject)}</td>
-    <td>${safe(t.phone)}</td>
-    <td>
-     <button class="edit" onclick="editTeacher(${i})">✏️</button>
-     <button class="danger" onclick="deleteTeacher(${i})">🗑️</button>
-    </td>
-   </tr>`;
- });
-}
-
-function editTeacher(i){
- let t=teachers[i];
- el('tname').value=t.name;
- el('tsubject').value=t.subject;
- el('tphone').value=t.phone;
- el('tedit').value=i;
- window.scrollTo(0,0);
-}
-
-function deleteTeacher(i){
- if(confirm('Futa taarifa za mwalimu?')){
-  teachers.splice(i,1);
-  saveData();
-  renderTeachers();
- }
-}
-
-function downloadTemplate(type){
- if(!window.XLSX)return alert('Washa intaneti kisha jaribu tena.');
-
- let headers=type==='students'
-  ?[['name','gender','class','guardian','phone']]
-  :[['name','subject','phone']];
-
- let wb=XLSX.utils.book_new();
- let ws=XLSX.utils.aoa_to_sheet(headers);
- XLSX.utils.book_append_sheet(wb,ws,type);
- XLSX.writeFile(wb,type+'_template.xlsx');
-}
-
-function importExcel(event,type){
- let file=event.target.files[0];
- if(!file)return;
-
- if(!window.XLSX)return alert('Huduma ya Excel haijapakia.');
-
- let reader=new FileReader();
-
- reader.onload=e=>{
-  try{
-   let wb=XLSX.read(e.target.result,{type:'array'});
-   let rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-
-   if(type==='students'){
-    rows.forEach(r=>{
-     if(r.name){
-      students.push({
-       name:String(r.name),
-       gender:String(r.gender||''),
-       cls:classes.includes(r.class)?r.class:'Awali',
-       guardian:String(r.guardian||''),
-       phone:String(r.phone||'')
-      });
-     }
-    });
-   }else{
-    rows.forEach(r=>{
-     if(r.name){
-      teachers.push({
-       name:String(r.name),
-       subject:String(r.subject||''),
-       phone:String(r.phone||'')
-      });
-     }
-    });
-   }
-
-   saveData();
-   buildClasses();
-   renderStudents();
-   renderTeachers();
-   alert('Taarifa zimeingizwa kwenye mfumo.');
-  }catch(err){
-   alert('Faili halijasomeka. Tumia templeti ya ST-MIS.');
-  }
- };
-
- reader.readAsArrayBuffer(file);
- event.target.value='';
-}
-
-function savePrincipal(){
- let p={
-  name:el('principalName').value,
-  school:el('schoolName').value,
-  phone:el('principalPhone').value
- };
- localStorage.setItem('stmis_principal',JSON.stringify(p));
- el('principalMessage').textContent='Taarifa zimehifadhiwa.';
-}
-
-function savePrincipalPhoto(event){
- let file=event.target.files[0];
- if(!file)return;
-
- let reader=new FileReader();
- reader.onload=e=>{
-  el('principalPhoto').src=e.target.result;
-  localStorage.setItem('stmis_principal_photo',e.target.result);
- };
- reader.readAsDataURL(file);
-}
-
-function safe(v){
- return String(v??'').replace(/[&<>"']/g,c=>({
-  '&':'&amp;',
-  '<':'&lt;',
-  '>':'&gt;',
-  '"':'&quot;',
-  "'":'&#39;'
- }[c]));
-}
-
-function loadPrincipal(){
- let p=JSON.parse(localStorage.getItem('stmis_principal')||'{}');
- el('principalName').value=p.name||'';
- el('schoolName').value=p.school||'';
- el('principalPhone').value=p.phone||'';
- el('principalPhoto').src=
-  localStorage.getItem('stmis_principal_photo')||'';
-}
-
-buildClasses();
-saveData();
-renderStudents();
-renderTeachers();
-loadPrincipal();
-</script>
-
-</body>
-    </html>
-    
-<!DOCTYPE html>
-<html lang="sw">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ST-MIS | ST Moses School Management</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#eef2f8;color:#17233b}
-header{background:linear-gradient(120deg,#071b3b,#075b9a);color:white;padding:20px}
-header h1{margin:0;font-size:23px}
-header p{margin:7px 0 0;color:#d8eaff}
-.robot{display:flex;align-items:center;gap:15px;margin-top:20px;background:#ffffff18;padding:15px;border-radius:15px}
-.robot svg{width:95px;flex-shrink:0}
-.robot h2{font-size:19px;margin:0 0 7px}
-nav{display:flex;gap:7px;overflow-x:auto;padding:12px;background:white}
-nav button{border:0;background:#e5edf7;padding:11px 14px;border-radius:8px;white-space:nowrap;font-weight:bold;color:#123}
-main{padding:15px;max-width:1100px;margin:auto}
-.page{display:none}.page.active{display:block}
-.card{background:white;padding:16px;border-radius:13px;margin-bottom:15px;box-shadow:0 2px 10px #0000000c}
-h2{color:#075b9a;font-size:20px}
-input,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #ccd6e2;border-radius:7px}
-button{cursor:pointer}
-.primary{background:#075b9a;color:white;border:0;padding:11px 15px;border-radius:7px}
-.danger{background:#b52c35;color:white;border:0;padding:8px;border-radius:6px}
-.edit{background:#e8a323;color:#17233b;border:0;padding:8px;border-radius:6px}
-.promote{background:#16845c;color:white;border:0;padding:8px;border-radius:6px}
-table{width:100%;border-collapse:collapse;min-width:580px}
-th,td{padding:10px;border-bottom:1px solid #e3e8ef;text-align:left}
-th{background:#eaf2fa}
-.tablewrap{overflow-x:auto}
-.stat{background:#eaf4ff;padding:15px;border-radius:10px;flex:1;min-width:110px}
-.stats{display:flex;gap:10px;flex-wrap:wrap}
-.stat strong{display:block;font-size:25px;color:#075b9a}
-.photo{width:115px;height:115px;border-radius:50%;object-fit:cover;border:4px solid #dcecff}
-small{color:#63748a}
-</style>
-</head>
-<body>
-
-<header>
-<h1>ST-MIS</h1>
-<p>ST MOSES SCHOOL MANAGEMENT SYSTEM</p>
-<div class="robot">
-<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-<rect x="23" y="28" width="74" height="66" rx="18" fill="#d9f4ff" stroke="#39b8ef" stroke-width="4"/>
-<rect x="34" y="42" width="52" height="29" rx="10" fill="#082b50"/>
-<circle cx="48" cy="56" r="5" fill="#36e5ff"/>
-<circle cx="72" cy="56" r="5" fill="#36e5ff"/>
-<path d="M48 80 Q60 90 72 80" fill="none" stroke="#1689b8" stroke-width="4" stroke-linecap="round"/>
-<path d="M60 28 V15 M51 15 H69" stroke="#39b8ef" stroke-width="4" stroke-linecap="round"/>
-<circle cx="60" cy="11" r="5" fill="#36e5ff"/>
-<path d="M23 48 H12 V77 H23 M97 48 H108 V77 H97" fill="none" stroke="#39b8ef" stroke-width="5" stroke-linecap="round"/>
-<path d="M42 94 V108 M78 94 V108" stroke="#39b8ef" stroke-width="7" stroke-linecap="round"/>
-</svg>
-<div>
-<h2>INTELLIGENT SCHOOL TECHNOLOGY</h2>
-<small style="color:white">Smart education • Digital management • Innovation</small>
-</div>
-</div>
-</header>
-
-<nav>
-<button onclick="showPage('home')">Dashboard</button>
-<button onclick="showPage('students')">Wanafunzi</button>
-<button onclick="showPage('teachers')">Walimu</button>
-<button onclick="showPage('classes')">Madarasa</button>
-<button onclick="showPage('templates')">Excel Templates</button>
-<button onclick="showPage('principal')">Mkuu wa shule</button>
-</nav>
-
-<main>
-<section id="home" class="page active">
-<div class="card">
-<h2>Karibu ST-MIS</h2>
-<p>Karibu kwenye mfumo wa usimamizi wa shule.</p>
-<div class="stats">
-<div class="stat"><strong id="studentCount">0</strong>Wanafunzi</div>
-<div class="stat"><strong id="teacherCount">0</strong>Walimu</div>
-<div class="stat"><strong>5</strong>Madarasa</div>
-</div>
-</div>
-<div class="card">
-<h2>Huduma za mfumo</h2>
-<p>Usajili, uhariri, kupandisha madarasa, na uingizaji wa taarifa kupitia Excel.</p>
-</div>
-</section>
-
-<section id="students" class="page">
-<div class="card">
-<h2>Usajili wa mwanafunzi</h2>
-<input id="sname" placeholder="Jina kamili la mwanafunzi">
-<select id="sgender"><option value="">Chagua jinsia</option><option>Mwanaume</option><option>Mwanamke</option></select>
-<select id="sclass">
-<option>Awali</option><option>Darasa la Kwanza</option><option>Darasa la Pili</option><option>Darasa la Tatu</option><option>Darasa la Nne</option>
-</select>
-<input id="sguardian" placeholder="Jina la mzazi/mlezi">
-<input id="sphone" placeholder="Simu ya mzazi/mlezi">
-<button class="primary" onclick="saveStudent()">Hifadhi mwanafunzi</button>
-<input type="hidden" id="sedit">
-</div>
-<div class="card">
-<h2>Orodha ya wanafunzi</h2>
-<input id="studentSearch" placeholder="Tafuta mwanafunzi..." oninput="renderStudents()">
-<div class="tablewrap"><table>
-<thead><tr><th>Jina</th><th>Jinsia</th><th>Darasa</th><th>Mlezi</th><th>Simu</th><th>Vitendo</th></tr></thead>
-<tbody id="studentRows"></tbody>
-</table></div>
-</div>
-</section>
-
-<section id="teachers" class="page">
-<div class="card">
-<h2>Usajili wa mwalimu</h2>
-<input id="tname" placeholder="Jina kamili la mwalimu">
-<input id="tsubject" placeholder="Somo/majukumu">
-<input id="tphone" placeholder="Namba ya simu">
-<button class="primary" onclick="saveTeacher()">Hifadhi mwalimu</button>
-<input type="hidden" id="tedit">
-</div>
-<div class="card">
-<h2>Orodha ya walimu</h2>
-<div class="tablewrap"><table>
-<thead><tr><th>Jina</th><th>Somo/majukumu</th><th>Simu</th><th>Vitendo</th></tr></thead>
-<tbody id="teacherRows"></tbody>
-</table></div>
-</div>
-</section>
-
-<section id="classes" class="page">
-<div class="card">
-<h2>Usimamizi wa madarasa</h2>
-<p>Madarasa yaliyopo kwenye mfumo:</p>
-<ul><li>Awali</li><li>Darasa la Kwanza</li><li>Darasa la Pili</li><li>Darasa la Tatu</li><li>Darasa la Nne</li></ul>
-<p>Unaweza kupandisha mwanafunzi kwa kutumia kitufe cha ⬆️ kwenye orodha ya wanafunzi.</p>
-</div>
-</section>
-
-<section id="templates" class="page">
-<div class="card">
-<h2>Excel Templates</h2>
-<p>Pakua templeti, jaza taarifa kwenye Excel, kisha pakia faili hapa.</p>
-<h3>Templeti ya wanafunzi</h3>
-<button class="primary" onclick="downloadTemplate('students')">Pakua Excel ya wanafunzi</button>
-<input type="file" id="studentFile" accept=".xlsx,.xls" onchange="importExcel(event,'students')">
-<h3>Templeti ya walimu</h3>
-<button class="primary" onclick="downloadTemplate('teachers')">Pakua Excel ya walimu</button>
-<input type="file" id="teacherFile" accept=".xlsx,.xls" onchange="importExcel(event,'teachers')">
-<small>Jaza vichwa vya safu kama vilivyo kwenye templeti. Mfumo unahitaji intaneti ili kutumia huduma ya Excel.</small>
-</div>
-</section>
-
-<section id="principal" class="page">
-<div class="card">
-<h2>Wasifu wa mkuu wa shule</h2>
-<img id="principalPhoto" class="photo" alt="Picha ya mkuu wa shule">
-<input type="file" id="principalImage" accept="image/*" onchange="savePrincipalPhoto(event)">
-<input id="principalName" placeholder="Jina la mkuu wa shule">
-<input id="schoolName" placeholder="Jina la shule">
-<input id="principalPhone" placeholder="Namba ya simu">
-<button class="primary" onclick="savePrincipal()">Hifadhi taarifa</button>
-<p id="principalMessage"></p>
-</div>
-</section>
-</main>
+<footer>ST-MIS • ST MOSES INTELLIGENT SCHOOL MANAGEMENT SYSTEM</footer>
 
 <script>
 const classes=['Awali','Darasa la Kwanza','Darasa la Pili','Darasa la Tatu','Darasa la Nne'];
-let students=JSON.parse(localStorage.getItem('stmis_students')||'[]');
-let teachers=JSON.parse(localStorage.getItem('stmis_teachers')||'[]');
+function getData(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return []}}
+let students=getData('stmis_students'),teachers=getData('stmis_teachers'),reports=getData('stmis_reports');
+let selectedClass='',currentStudentPhoto='';
 
-function store(){
-localStorage.setItem('stmis_students',JSON.stringify(students));
-localStorage.setItem('stmis_teachers',JSON.stringify(teachers));
-document.getElementById('studentCount').textContent=students.length;
-document.getElementById('teacherCount').textContent=teachers.length;
+function el(id){return document.getElementById(id)}
+function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function money(n){return Number(n||0).toLocaleString('en-US')}
+function persist(){
+ localStorage.setItem('stmis_students',JSON.stringify(students));
+ localStorage.setItem('stmis_teachers',JSON.stringify(teachers));
+ localStorage.setItem('stmis_reports',JSON.stringify(reports));
+ updateDashboard();
 }
+function toggleMenu(){el('drawer').classList.toggle('open')}
 function showPage(id){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ el(id).classList.add('active');el('drawer').classList.remove('open');
+ if(id==='students'){selectedClass='';el('listTitle').textContent='✦ ORODHA YA WANAFUNZI';renderStudents()}
+ if(id==='fees'){fillFeeStudents();renderFees()}
+ if(id==='reports'){fillReportStudents();renderReports()}
+}
+function updateDashboard(){
+ el('totalStudents').textContent=students.length;
+ el('totalTeachers').textContent=teachers.length;
+ el('totalReports').textContent=reports.length;
+ let expected=students.reduce((a,s)=>a+Number(s.feeExpected||0),0);
+ let paid=students.reduce((a,s)=>a+Number(s.feePaid||0),0);
+ el('expectedFees').textContent=money(expected);
+ el('collectedFees').textContent=money(paid);
+ el('feeDebt').textContent=money(Math.max(0,expected-paid));
+}
+function buildClasses(){
+ el('sclass').innerHTML=classes.map(c=>`<option>${c}</option>`).join('');
+ el('classGrid').innerHTML=classes.map(c=>{
+  let n=students.filter(s=>s.cls===c).length;
+  return `<div class="classCard"><strong>${n}</strong><button onclick="openClass('${c}')">${c}</button></div>`;
+ }).join('');
+}
+function openClass(c){
+ selectedClass=c;showPage('students');selectedClass=c;
+ el('listTitle').textContent='✦ WANAFUNZI: '+c;renderStudents();
+}
+function previewStudentPhoto(event){
+ let file=event.target.files[0];if(!file)return;
+ if(!file.type.startsWith('image/'))return alert('Chagua picha sahihi.');
+ let reader=new FileReader();
+ reader.onload=e=>{
+  let img=new Image();
+  img.onload=()=>{
+   let canvas=document.createElement('canvas');canvas.width=300;canvas.height=400;
+   let ctx=canvas.getContext('2d'),scale=Math.max(300/img.width,400/img.height);
+   let w=img.width*scale,h=img.height*scale;
+   ctx.drawImage(img,(300-w)/2,(400-h)/2,w,h);
+   currentStudentPhoto=canvas.toDataURL('image/jpeg',0.65);
+   el('studentPreview').src=currentStudentPhoto;
+  };img.src=e.target.result;
+ };reader.readAsDataURL(file);
 }
 function saveStudent(){
-let name=document.getElementById('sname').value.trim();
-if(!name)return alert('Weka jina la mwanafunzi');
-let id=document.getElementById('sedit').value;
-let item={name,gender:sgender.value,cls:sclass.value,guardian:sguardian.value,phone:sphone.value};
-if(id!=='')students[Number(id)]=item;else students.push(item);
-clearStudent();store();renderStudents();alert('Taarifa zimehifadhiwa');
+ let name=el('sname').value.trim();if(!name)return alert('Weka jina la mwanafunzi.');
+ let id=el('sedit').value,old=id!==''?students[Number(id)]:null;
+ let item={
+  id:old?old.id:'ST'+Date.now(),name,gender:el('sgender').value,
+  cls:el('sclass').value,guardian:el('sguardian').value,phone:el('sphone').value,
+  photo:currentStudentPhoto||(old?old.photo:''),
+  feeExpected:old?Number(old.feeExpected||0):0,
+  feePaid:old?Number(old.feePaid||0):0,
+  feeDate:old?old.feeDate||'':'',feeNote:old?old.feeNote||'':''
+ };
+ if(id!=='')students[Number(id)]=item;else students.push(item);
+ clearStudent();persist();buildClasses();renderStudents();alert('Mwanafunzi amehifadhiwa.');
 }
 function clearStudent(){
-['sname','sgender','sguardian','sphone','sedit'].forEach(x=>document.getElementById(x).value='');
-sclass.value=classes[0];
+ ['sname','sgender','sguardian','sphone','sedit'].forEach(x=>el(x).value='');
+ el('sclass').value=classes[0];el('studentPreview').src='';
+ el('studentPhotoFile').value='';currentStudentPhoto='';
+ el('studentTitle').textContent='✦ USAJILI WA MWANAFUNZI';
 }
 function renderStudents(){
-let q=document.getElementById('studentSearch').value.toLowerCase();
-studentRows.innerHTML='';
-students.forEach((s,i)=>{
-if(!s.name.toLowerCase().includes(q))return;
-studentRows.innerHTML+=`<tr><td>${safe(s.name)}</td><td>${safe(s.gender||'')}</td><td>${safe(s.cls)}</td><td>${safe(s.guardian||'')}</td><td>${safe(s.phone||'')}</td><td><button class="edit" onclick="editStudent(${i})">✏️</button> <button class="promote" onclick="promoteStudent(${i})">⬆️</button> <button class="danger" onclick="deleteStudent(${i})">🗑️</button></td></tr>`;
-});
+ let q=(el('studentSearch').value||'').toLowerCase();el('studentRows').innerHTML='';
+ students.forEach((s,i)=>{
+  if(selectedClass&&s.cls!==selectedClass)return;
+  if(!String(s.name).toLowerCase().includes(q))return;
+  el('studentRows').innerHTML+=`<tr>
+  <td>${s.photo?`<img class="thumb" src="${s.photo}" alt="Picha">`:'—'}</td>
+  <td>${safe(s.name)}</td><td>${safe(s.gender)}</td><td>${safe(s.cls)}</td>
+  <td>${safe(s.guardian)}</td><td>${safe(s.phone)}</td>
+  <td><button class="btn2" onclick="editStudent(${i})">✏️</button>
+  <button class="up" onclick="promoteStudent(${i})">⬆️</button>
+  <button class="del" onclick="deleteStudent(${i})">🗑️</button></td></tr>`;
+ });
 }
 function editStudent(i){
-let s=students[i];sname.value=s.name;sgender.value=s.gender;sclass.value=s.cls;sguardian.value=s.guardian;sphone.value=s.phone;sedit.value=i;showPage('students');window.scrollTo(0,0);
+ let s=students[i];el('sname').value=s.name;el('sgender').value=s.gender;
+ el('sclass').value=s.cls;el('sguardian').value=s.guardian;el('sphone').value=s.phone;
+ el('sedit').value=i;currentStudentPhoto=s.photo||'';el('studentPreview').src=currentStudentPhoto;
+ el('studentTitle').textContent='✦ HARIRI MWANAFUNZI';window.scrollTo(0,0);
 }
 function promoteStudent(i){
-let s=students[i],n=classes.indexOf(s.cls);
-if(n<0||n===classes.length-1)return alert('Mwanafunzi huyu yuko darasa la mwisho.');
-s.cls=classes[n+1];store();renderStudents();alert('Mwanafunzi amepandishwa kwenda '+s.cls);
+ let n=classes.indexOf(students[i].cls);
+ if(n<0||n===classes.length-1)return alert('Mwanafunzi yuko darasa la mwisho.');
+ students[i].cls=classes[n+1];persist();buildClasses();renderStudents();
+ alert('Amepandishwa kwenda '+students[i].cls);
 }
 function deleteStudent(i){
-if(confirm('Una uhakika wa kufuta mwanafunzi huyu?')){students.splice(i,1);store();renderStudents();}
+ if(confirm('Una uhakika wa kufuta mwanafunzi?')){
+  students.splice(i,1);persist();buildClasses();renderStudents();fillFeeStudents();fillReportStudents();
+ }
 }
 function saveTeacher(){
-let name=tname.value.trim();if(!name)return alert('Weka jina la mwalimu');
-let id=tedit.value,item={name,subject:tsubject.value,phone:tphone.value};
-if(id!=='')teachers[Number(id)]=item;else teachers.push(item);
-['tname','tsubject','tphone','tedit'].forEach(x=>document.getElementById(x).value='');
-store();renderTeachers();alert('Taarifa za mwalimu zimehifadhiwa');
+ let name=el('tname').value.trim();if(!name)return alert('Weka jina la mwalimu.');
+ let id=el('tedit').value,item={name,subject:el('tsubject').value,phone:el('tphone').value};
+ if(id!=='')teachers[Number(id)]=item;else teachers.push(item);
+ ['tname','tsubject','tphone','tedit'].forEach(x=>el(x).value='');
+ persist();renderTeachers();alert('Mwalimu amehifadhiwa.');
 }
 function renderTeachers(){
-teacherRows.innerHTML='';
-teachers.forEach((t,i)=>teacherRows.innerHTML+=`<tr><td>${safe(t.name)}</td><td>${safe(t.subject||'')}</td><td>${safe(t.phone||'')}</td><td><button class="edit" onclick="editTeacher(${i})">✏️</button> <button class="danger" onclick="deleteTeacher(${i})">🗑️</button></td></tr>`);
+ el('teacherRows').innerHTML='';
+ teachers.forEach((t,i)=>el('teacherRows').innerHTML+=`<tr><td>${safe(t.name)}</td><td>${safe(t.subject)}</td><td>${safe(t.phone)}</td><td>
+ <button class="btn2" onclick="editTeacher(${i})">✏️</button><button class="del" onclick="deleteTeacher(${i})">🗑️</button></td></tr>`);
 }
 function editTeacher(i){
-let t=teachers[i];tname.value=t.name;tsubject.value=t.subject;tphone.value=t.phone;tedit.value=i;showPage('teachers');window.scrollTo(0,0);
+ let t=teachers[i];el('tname').value=t.name;el('tsubject').value=t.subject;
+ el('tphone').value=t.phone;el('tedit').value=i;window.scrollTo(0,0);
 }
 function deleteTeacher(i){
-if(confirm('Una uhakika wa kufuta mwalimu huyu?')){teachers.splice(i,1);store();renderTeachers();}
+ if(confirm('Futa taarifa za mwalimu?')){teachers.splice(i,1);persist();renderTeachers()}
 }
-function downloadTemplate(type){
-if(!window.XLSX)return alert('Huduma ya Excel haijapakia. Hakikisha intaneti ipo.');
-let headers=type==='students'?[['name','gender','class','guardian','phone']]:[['name','subject','phone']];
-let ws=XLSX.utils.aoa_to_sheet(headers);
-let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,type);
-XLSX.writeFile(wb,type+'_template.xlsx');
+
+/* ADA */
+function fillFeeStudents(){
+ let selected=el('feeStudent').value;
+ el('feeStudent').innerHTML=students.map(s=>`<option value="${safe(s.id)}">${safe(s.name)} — ${safe(s.cls)}</option>`).join('');
+ if(students.some(s=>s.id===selected))el('feeStudent').value=selected;
+ loadFeeStudent();
 }
-function importExcel(event,type){
-let file=event.target.files[0];if(!file)return;
-if(!window.XLSX)return alert('Huduma ya Excel haijapakia. Hakikisha intaneti ipo.');
-let reader=new FileReader();
-reader.onload=e=>{
-try{
-let wb=XLSX.read(e.target.result,{type:'array'});
-let rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-if(type==='students'){
-rows.forEach(r=>{if(r.name)students.push({name:String(r.name),gender:String(r.gender||''),cls:classes.includes(r.class)?r.class:'Awali',guardian:String(r.guardian||''),phone:String(r.phone||'')});});
-store();renderStudents();
-}else{
-rows.forEach(r=>{if(r.name)teachers.push({name:String(r.name),subject:String(r.subject||''),phone:String(r.phone||'')});});
-store();renderTeachers();
+function loadFeeStudent(){
+ let s=students.find(x=>x.id===el('feeStudent').value);
+ if(!s){clearFeeForm();return}
+ el('feeExpected').value=s.feeExpected||0;el('feePaid').value=s.feePaid||0;
+ el('feeDate').value=s.feeDate||'';el('feeNote').value=s.feeNote||'';
 }
-alert('Taarifa zimeingizwa kwenye mfumo.');
-}catch(err){alert('Imeshindikana kusoma faili. Tumia templeti ya mfumo.');}
-};
-reader.readAsArrayBuffer(file);
+function clearFeeForm(){
+ el('feeExpected').value='';el('feePaid').value='';
+ el('feeDate').value='';el('feeNote').value='';
 }
-function savePrincipal(){
-let data={name:principalName.value,school:schoolName.value,phone:principalPhone.value};
-localStorage.setItem('stmis_principal',JSON.stringify(data));
-principalMessage.textContent='Taarifa zimehifadhiwa.';
+function saveFee(){
+ let s=students.find(x=>x.id===el('feeStudent').value);
+ if(!s)return alert('Sajili mwanafunzi kwanza.');
+ let expected=Number(el('feeExpected').value),paid=Number(el('feePaid').value);
+ if(!Number.isFinite(expected)||!Number.isFinite(paid)||expected<0||paid<0)return alert('Weka kiasi sahihi.');
+ if(paid>expected)return alert('Kiasi alicholipa hakiwezi kuzidi ada inayotakiwa.');
+ s.feeExpected=expected;s.feePaid=paid;s.feeDate=el('feeDate').value;s.feeNote=el('feeNote').value;
+ persist();renderFees();alert('Taarifa za ada zimehifadhiwa.');
 }
-function savePrincipalPhoto(event){
-let file=event.target.files[0];if(!file)return;
-let reader=new FileReader();
-reader.onload=e=>{principalPhoto.src=e.target.result;localStorage.setItem('stmis_principal_photo',e.target.result);};
-reader.readAsDataURL(file);
+function renderFees(){
+ let q=(el('feeSearch').value||'').toLowerCase();el('feeRows').innerHTML='';
+ students.forEach((s,i)=>{
+  if(!s.name.toLowerCase().includes(q))return;
+  let expected=Number(s.feeExpected||0),paid=Number(s.feePaid||0),debt=Math.max(0,expected-paid);
+  let status=debt===0&&expected>0?'<span class="good">Amelipa</span>':paid>0?'<span class="partial">Amelipa sehemu</span>':'<span class="bad">Hajalipa</span>';
+  el('feeRows').innerHTML+=`<tr><td>${safe(s.name)}</td><td>${safe(s.cls)}</td>
+  <td>${money(expected)}</td><td>${money(paid)}</td><td>${money(debt)}</td><td>${status}</td>
+  <td>${safe(s.feeDate||'—')}</td><td><button class="btn2" onclick="selectFee('${s.id}')">Hariri</button></td></tr>`;
+ });
 }
-function safe(v){
-return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function selectFee(id){el('feeStudent').value=id;loadFeeStudent();window.scrollTo(0,0)}
+function printFees(){window.print()}
+
+/* RIPOTI */
+function fillReportStudents(){
+ el('reportStudent').innerHTML=students.map(s=>`<option value="${safe(s.id)}">${safe(s.name)} — ${safe(s.cls)}</option>`).join('');
 }
-let p=JSON.parse(localStorage.getItem('stmis_principal')||'{}');
-principalName.value=p.name||'';schoolName.value=p.school||'';principalPhone.value=p.phone||'';
-principalPhoto.src=localStorage.getItem('stmis_principal_photo')||'';
-store();renderStudents();renderTeachers();
-</script>
-</body>
-  </html>
-  
+function uploadReport(){
+ let s=students.find(x=>x.id===el('reportStudent').value),file=el('reportFile').files[0];
+ if(!s)return alert('Sajili au chagua mwanafunzi.');
+ if(!file)return alert('Chagua faili la ripoti.');
+ if(file.size>1024*1024)return alert('Faili ni kubwa. Tafadhali tumia faili lisilozidi 1 MB.');
+ let reader=new FileReader();
+ reader.onload=e=>{
+  reports.push({id:'RP'+Date.now(),studentId:s.id,student:s.name,type:el('reportType').value,
+   description:el('reportDescription').value,fileName:file.name,data:e.target.result,d
