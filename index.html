@@ -1,295 +1,397 @@
 
-const $ = id => document.getElementById(id);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ST-MIS | School Management System</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#080d18;color:#f5f5f5}
+header{background:#111b2e;padding:16px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #f5c518}
+header h2{color:#f5c518;margin:0;font-size:19px}
+.menu{background:#f5c518;color:#080d18;border:0;padding:10px 14px;font-size:22px;border-radius:6px}
+nav{display:none;background:#111b2e;padding:10px}
+nav button{display:block;width:100%;text-align:left;background:transparent;color:white;border:0;padding:13px;font-size:15px;border-bottom:1px solid #29364c}
+nav button:hover{background:#24334c;color:#f5c518}
+main{padding:16px;max-width:1100px;margin:auto}
+.page{display:none}
+.page.active{display:block}
+h1,h2,h3{color:#f5c518}
+.card{background:#111b2e;border:1px solid #29364c;border-radius:12px;padding:16px;margin:12px 0}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#17243a;padding:18px;border-radius:10px;border-left:4px solid #f5c518}
+.stat strong{display:block;font-size:25px;color:#f5c518;margin-top:8px}
+input,select{width:100%;padding:12px;margin:7px 0 12px;background:#080d18;color:white;border:1px solid #526079;border-radius:6px;font-size:15px}
+label{color:#d6dbe5;font-size:14px}
+button.action{background:#f5c518;color:#101827;border:0;border-radius:6px;padding:11px 15px;font-weight:bold;margin:4px;cursor:pointer}
+button.danger{background:#b83232;color:white}
+button.secondary{background:#33445f;color:white}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th,td{padding:11px;border-bottom:1px solid #35435b;text-align:left;font-size:13px}
+th{color:#f5c518;background:#17243a}
+.table-wrap{overflow-x:auto}
+.small{color:#aab5c8;font-size:13px}
+.robot{font-size:65px;text-align:center;margin:12px}
+footer{text-align:center;color:#8e9bb0;padding:25px;font-size:12px}
+</style>
+</head>
+<body>
 
-const STORAGE = {
- students: 'st_mis_students_v2',
- teachers: 'st_mis_teachers_v2',
- fees: 'st_mis_fees_v2'
-};
+<header>
+<h2>ST-MIS SCHOOL SYSTEM</h2>
+<button class="menu" onclick="toggleMenu()">☰</button>
+</header>
 
-function load(key) {
- try {
-  return JSON.parse(localStorage.getItem(key) || '[]');
- } catch(e) {
-  return [];
+<nav id="menu">
+<button onclick="showPage('dashboard')">🏠 Dashboard</button>
+<button onclick="showPage('students')">👨‍🎓 Students</button>
+<button onclick="showPage('teachers')">👨‍🏫 Teachers</button>
+<button onclick="showPage('fees')">💰 School Fees</button>
+<button onclick="showPage('reports')">📊 Reports</button>
+<button onclick="showPage('settings')">⚙️ Settings</button>
+</nav>
+
+<main>
+
+<section id="dashboard" class="page active">
+<div class="robot">🤖</div>
+<h1>WELCOME TO ST-MIS</h1>
+<p class="small">ST MOSES SCHOOL MANAGEMENT SYSTEM</p>
+<div class="stats">
+<div class="stat">Total Students<strong id="totalStudents">0</strong></div>
+<div class="stat">Total Teachers<strong id="totalTeachers">0</strong></div>
+<div class="stat">Fees Recorded<strong id="totalFees">0</strong></div>
+<div class="stat">Classes<strong>7</strong></div>
+</div>
+<div class="card">
+<h3>System Dashboard</h3>
+<p>Manage students, teachers, school fees and academic records from one place.</p>
+<button class="action" onclick="showPage('students')">Manage Students</button>
+<button class="action" onclick="showPage('teachers')">Manage Teachers</button>
+</div>
+</section>
+
+<section id="students" class="page">
+<h2>STUDENT REGISTRATION</h2>
+<div class="card">
+<form id="studentForm">
+<label>Student Full Name</label>
+<input id="studentName" required placeholder="Enter student name">
+<label>Gender</label>
+<select id="studentGender" required>
+<option value="">Select gender</option>
+<option>Male</option><option>Female</option>
+</select>
+<label>Class</label>
+<select id="studentClass">
+<option>Baby Class</option><option>Middle Class</option><option>Pre-Unit</option>
+<option>Standard One</option><option>Standard Two</option>
+<option>Standard Three</option><option>Standard Four</option>
+<option>Standard Five</option><option>Standard Six</option><option>Standard Seven</option>
+</select>
+<label>Parent / Guardian Phone</label>
+<input id="studentPhone" placeholder="Phone number">
+<button class="action" type="submit">SAVE STUDENT</button>
+</form>
+</div>
+
+<div class="card">
+<h3>Registered Students</h3>
+<input id="studentSearch" placeholder="Search student name or admission number..." oninput="renderStudents()">
+<div class="table-wrap">
+<table>
+<thead><tr><th>Admission No.</th><th>Name</th><th>Gender</th><th>Class</th><th>Actions</th></tr></thead>
+<tbody id="studentTable"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section id="teachers" class="page">
+<h2>TEACHER MANAGEMENT</h2>
+<div class="card">
+<form id="teacherForm">
+<label>Teacher Full Name</label>
+<input id="teacherName" required placeholder="Enter teacher name">
+<label>Phone Number</label>
+<input id="teacherPhone" placeholder="Phone number">
+<label>Teaching Subject</label>
+<input id="teacherSubject" placeholder="Enter subject">
+<button class="action" type="submit">SAVE TEACHER</button>
+</form>
+</div>
+<div class="card">
+<h3>Registered Teachers</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Name</th><th>Phone</th><th>Subject</th><th>Action</th></tr></thead>
+<tbody id="teacherTable"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section id="fees" class="page">
+<h2>SCHOOL FEES MANAGEMENT</h2>
+<div class="card">
+<form id="feeForm">
+<label>Student</label>
+<select id="feeStudent" required></select>
+<label>Amount Paid (TZS)</label>
+<input id="feeAmount" type="number" min="1" required placeholder="Enter amount">
+<label>Payment Description</label>
+<input id="feeDescription" placeholder="e.g. Tuition fee">
+<button class="action" type="submit">RECORD PAYMENT</button>
+</form>
+</div>
+<div class="card">
+<h3>Payment Records</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Student</th><th>Amount (TZS)</th><th>Description</th><th>Date</th></tr></thead>
+<tbody id="feeTable"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section id="reports" class="page">
+<h2>SCHOOL REPORTS</h2>
+<div class="card">
+<h3>Student Report</h3>
+<p>Total Students: <strong id="reportStudents">0</strong></p>
+<p>Total Teachers: <strong id="reportTeachers">0</strong></p>
+<p>Total Fees Collected: TZS <strong id="reportFees">0</strong></p>
+<button class="action" onclick="window.print()">PRINT REPORT</button>
+</div>
+</section>
+
+<section id="settings" class="page">
+<h2>SYSTEM SETTINGS</h2>
+<div class="card">
+<h3>Data Backup</h3>
+<p class="small">Download a backup of your school records.</p>
+<button class="action" onclick="backupData()">DOWNLOAD BACKUP</button>
+</div>
+<div class="card">
+<h3>Restore Data</h3>
+<input type="file" id="restoreFile" accept=".json">
+<button class="action" onclick="restoreData()">RESTORE BACKUP</button>
+</div>
+<div class="card">
+<h3>Important Information</h3>
+<p>System: ST-MIS</p>
+<p>Developer: ST MOSES INTELLIGENTIC TECHNOLOGY</p>
+<p class="small">Records are stored in this browser on this device. Download backups regularly.</p>
+</div>
+</section>
+
+</main>
+
+<footer>© 2026 ST-MIS | ST MOSES INTELLIGENTIC TECHNOLOGY</footer>
+
+<script>
+const KEY="STMIS_DATABASE_V1";
+
+let db;
+try{
+ db=JSON.parse(localStorage.getItem(KEY))||{students:[],teachers:[],fees:[],next:1};
+}catch(e){
+ db={students:[],teachers:[],fees:[],next:1};
+}
+
+function saveData(){
+ localStorage.setItem(KEY,JSON.stringify(db));
+ renderAll();
+}
+
+function toggleMenu(){
+ const menu=document.getElementById("menu");
+ menu.style.display=menu.style.display==="block"?"none":"block";
+}
+
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.getElementById("menu").style.display="none";
+ renderAll();
+}
+
+document.getElementById("studentForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ const student={
+ id:Date.now(),
+ admission:"ST-MIS-2026-"+String(db.next).padStart(4,"0"),
+ name:document.getElementById("studentName").value.trim(),
+ gender:document.getElementById("studentGender").value,
+ className:document.getElementById("studentClass").value,
+ phone:document.getElementById("studentPhone").value.trim()
+ };
+ if(!student.name)return;
+ db.students.push(student);
+ db.next++;
+ this.reset();
+ saveData();
+ alert("Student registered successfully. Admission: "+student.admission);
+});
+
+document.getElementById("teacherForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ db.teachers.push({
+ id:Date.now(),
+ name:document.getElementById("teacherName").value.trim(),
+ phone:document.getElementById("teacherPhone").value.trim(),
+ subject:document.getElementById("teacherSubject").value.trim()
+ });
+ this.reset();
+ saveData();
+ alert("Teacher saved successfully");
+});
+
+document.getElementById("feeForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ const studentId=Number(document.getElementById("feeStudent").value);
+ const student=db.students.find(s=>s.id===studentId);
+ if(!student){alert("Please register a student first");return;}
+ db.fees.push({
+ id:Date.now(),
+ studentId:student.id,
+ studentName:student.name,
+ amount:Number(document.getElementById("feeAmount").value),
+ description:document.getElementById("feeDescription").value.trim(),
+ date:new Date().toLocaleDateString()
+ });
+ this.reset();
+ saveData();
+ alert("Payment recorded successfully");
+});
+
+function promoteStudent(id){
+ const s=db.students.find(x=>x.id===id);
+ if(!s)return;
+ const classes=["Baby Class","Middle Class","Pre-Unit","Standard One","Standard Two","Standard Three","Standard Four","Standard Five","Standard Six","Standard Seven"];
+ const index=classes.indexOf(s.className);
+ if(index>=0&&index<classes.length-1){
+  s.className=classes[index+1];
+  saveData();
+  alert("Student promoted to "+s.className);
+ }else{
+  alert("Student is already in the highest class.");
  }
 }
 
-let students = load(STORAGE.students);
-let teachers = load(STORAGE.teachers);
-let fees = load(STORAGE.fees);
-
-function saveData() {
- try {
-  localStorage.setItem(STORAGE.students, JSON.stringify(students));
-  localStorage.setItem(STORAGE.teachers, JSON.stringify(teachers));
-  localStorage.setItem(STORAGE.fees, JSON.stringify(fees));
-  render();
-  return true;
- } catch(e) {
-  alert('Storage error: Browser cannot save data. Open the published website directly in Chrome.');
-  return false;
+function demoteStudent(id){
+ const s=db.students.find(x=>x.id===id);
+ if(!s)return;
+ const classes=["Baby Class","Middle Class","Pre-Unit","Standard One","Standard Two","Standard Three","Standard Four","Standard Five","Standard Six","Standard Seven"];
+ const index=classes.indexOf(s.className);
+ if(index>0){
+  s.className=classes[index-1];
+  saveData();
+  alert("Student returned to "+s.className);
+ }else{
+  alert("Student is already in the first class.");
  }
 }
 
-function safe(v) {
- return String(v ?? '').replace(/[&<>"']/g,c=>({
- '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+function deleteStudent(id){
+ if(!confirm("Delete this student?"))return;
+ db.students=db.students.filter(s=>s.id!==id);
+ saveData();
+}
+
+function deleteTeacher(id){
+ if(!confirm("Delete this teacher?"))return;
+ db.teachers=db.teachers.filter(t=>t.id!==id);
+ saveData();
+}
+
+function renderStudents(){
+ const q=(document.getElementById("studentSearch")?.value||"").toLowerCase();
+ const rows=db.students.filter(s=>(s.name+" "+s.admission).toLowerCase().includes(q));
+ document.getElementById("studentTable").innerHTML=rows.map(s=>`
+ <tr>
+ <td>${escapeHTML(s.admission)}</td>
+ <td>${escapeHTML(s.name)}</td>
+ <td>${escapeHTML(s.gender)}</td>
+ <td>${escapeHTML(s.className)}</td>
+ <td>
+ <button class="action" onclick="promoteStudent(${s.id})">⬆ Promote</button>
+ <button class="action secondary" onclick="demoteStudent(${s.id})">⬇ Return</button>
+ <button class="action danger" onclick="deleteStudent(${s.id})">Delete</button>
+ </td>
+ </tr>`).join("")||'<tr><td colspan="5">No students registered</td></tr>';
+}
+
+function renderTeachers(){
+ document.getElementById("teacherTable").innerHTML=db.teachers.map(t=>`
+ <tr><td>${escapeHTML(t.name)}</td><td>${escapeHTML(t.phone)}</td>
+ <td>${escapeHTML(t.subject)}</td>
+ <td><button class="action danger" onclick="deleteTeacher(${t.id})">Delete</button></td></tr>
+ `).join("")||'<tr><td colspan="4">No teachers registered</td></tr>';
+}
+
+function renderFees(){
+ const select=document.getElementById("feeStudent");
+ const old=select.value;
+ select.innerHTML='<option value="">Select student</option>'+db.students.map(s=>
+ `<option value="${s.id}">${escapeHTML(s.name)} - ${escapeHTML(s.admission)}</option>`).join("");
+ if(old)select.value=old;
+ document.getElementById("feeTable").innerHTML=db.fees.map(f=>`
+ <tr><td>${escapeHTML(f.studentName)}</td><td>${Number(f.amount).toLocaleString()}</td>
+ <td>${escapeHTML(f.description)}</td><td>${escapeHTML(f.date)}</td></tr>
+ `).join("")||'<tr><td colspan="4">No payments recorded</td></tr>';
+}
+
+function renderAll(){
+ document.getElementById("totalStudents").textContent=db.students.length;
+ document.getElementById("totalTeachers").textContent=db.teachers.length;
+ const total=db.fees.reduce((sum,f)=>sum+Number(f.amount),0);
+ document.getElementById("totalFees").textContent=total.toLocaleString();
+ document.getElementById("reportStudents").textContent=db.students.length;
+ document.getElementById("reportTeachers").textContent=db.teachers.length;
+ document.getElementById("reportFees").textContent=total.toLocaleString();
+ renderStudents();
+ renderTeachers();
+ renderFees();
+}
+
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  }[c]));
 }
 
-function generateAdmission() {
- const year = new Date().getFullYear();
- const nums = students.map(s => {
-  const m = String(s.admission || '').match(/(\d+)$/);
-  return m ? Number(m[1]) : 0;
- });
- return 'ST-MIS-' + year + '-' +
- String(Math.max(0,...nums)+1).padStart(4,'0');
-}
-
-function resetStudent() {
- $('studentForm').reset();
- $('studentEdit').value = '';
- $('admission').value = '';
-}
-
-$('studentForm').addEventListener('submit', function(e) {
- e.preventDefault();
-
- const id = $('studentEdit').value;
- const name = $('studentName').value.trim();
-
- if (!name) {
-  alert('Enter student name');
-  return;
- }
-
- const existing = students.find(s => s.id === id);
-
- const data = {
-  id: id || String(Date.now()),
-  name: name,
-  admission: existing ? existing.admission : generateAdmission(),
-  cls: $('studentClass').value,
-  gender: $('gender').value,
-  phone: $('parentPhone').value.trim()
- };
-
- if (id) {
-  const index = students.findIndex(s => s.id === id);
-  if (index === -1) {
-   alert('Student not found');
-   return;
-  }
-  students[index] = data;
- } else {
-  students.push(data);
- }
-
- if (saveData()) {
-  resetStudent();
-  alert('Student saved successfully! Admission: ' + data.admission);
- }
-});
-
-function editStudent(id) {
- const s = students.find(x => x.id === id);
- if (!s) return;
-
- $('studentEdit').value = s.id;
- $('studentName').value = s.name;
- $('admission').value = s.admission;
- $('studentClass').value = s.cls;
- $('gender').value = s.gender;
- $('parentPhone').value = s.phone || '';
-}
-
-function deleteStudent(id) {
- if (!confirm('Delete this student?')) return;
- students = students.filter(s => s.id !== id);
- saveData();
-}
-
-$('teacherForm').addEventListener('submit', function(e) {
- e.preventDefault();
-
- const name = $('teacherName').value.trim();
- if (!name) {
-  alert('Enter teacher name');
-  return;
- }
-
- teachers.push({
-  id: String(Date.now()),
-  name: name,
-  phone: $('teacherPhone').value.trim(),
-  subject: $('teacherSubject').value.trim()
- });
-
- if (saveData()) {
-  this.reset();
-  alert('Teacher saved successfully!');
- }
-});
-
-function deleteTeacher(id) {
- if (!confirm('Delete this teacher?')) return;
- teachers = teachers.filter(t => t.id !== id);
- saveData();
-}
-
-$('feeForm').addEventListener('submit', function(e) {
- e.preventDefault();
-
- const admission = $('feeAdmission').value.trim();
- const student = students.find(s => s.admission === admission);
-
- if (!student) {
-  alert('Student admission number not found');
-  return;
- }
-
- fees.push({
-  admission: admission,
-  student: student.name,
-  amount: Number($('feeAmount').value),
-  description: $('feeDescription').value,
-  date: new Date().toLocaleDateString()
- });
-
- if (saveData()) {
-  this.reset();
-  alert('Payment saved successfully!');
- }
-});
-
-function changeClass() {
- const adm = $('promotionAdmission').value.trim();
- const s = students.find(x => x.admission === adm);
-
- if (!s) {
-  alert('Student not found');
-  return;
- }
-
- const old = s.cls;
- s.cls = $('newClass').value;
-
- if (saveData()) {
-  alert('Class changed from ' + old + ' to ' + s.cls);
- }
-}
-
-function render() {
- $('studentCount').textContent = students.length;
- $('teacherCount').textContent = teachers.length;
- $('classCount').textContent =
-  new Set(students.map(s => s.cls)).size;
-
- const total = fees.reduce((a,f)=>a+Number(f.amount),0);
-
- $('totalFees').textContent = total.toLocaleString()+' TZS';
- $('reportStudents').textContent = students.length;
- $('reportTeachers').textContent = teachers.length;
- $('reportFees').textContent = total.toLocaleString()+' TZS';
-
- $('studentTable').innerHTML = students.length ?
- students.map(s => `
- <tr>
- <td>${safe(s.admission)}</td>
- <td>${safe(s.name)}</td>
- <td>${safe(s.cls)}</td>
- <td>${safe(s.gender)}</td>
- <td>
- <button class="primary" onclick="editStudent('${safe(s.id)}')">EDIT</button>
- <button class="danger" onclick="deleteStudent('${safe(s.id)}')">DELETE</button>
- </td>
- </tr>
- `).join('') :
- '<tr><td colspan="5" class="empty">No students registered</td></tr>';
-
- $('teacherTable').innerHTML = teachers.length ?
- teachers.map(t => `
- <tr>
- <td>${safe(t.name)}</td>
- <td>${safe(t.phone)}</td>
- <td>${safe(t.subject)}</td>
- <td><button class="danger" onclick="deleteTeacher('${safe(t.id)}')">DELETE</button></td>
- </tr>
- `).join('') :
- '<tr><td colspan="4" class="empty">No teachers registered</td></tr>';
-
- $('feeTable').innerHTML = fees.length ?
- fees.map(f => `
- <tr>
- <td>${safe(f.admission)}</td>
- <td>${safe(f.student)}</td>
- <td>${Number(f.amount).toLocaleString()} TZS</td>
- <td>${safe(f.description)}</td>
- <td>${safe(f.date)}</td>
- </tr>
- `).join('') :
- '<tr><td colspan="5" class="empty">No payments recorded</td></tr>';
-
- const classes = [...new Set(students.map(s=>s.cls))];
-
- $('classRecords').innerHTML = classes.length ?
- classes.map(c=>`
- <p style="color:#ffd600">
- ${safe(c)}: ${students.filter(s=>s.cls===c).length} students
- </p>
- `).join('') : 'No class records yet';
-}
-
-function toggleMenu() {
- $('navigation').classList.toggle('open');
- $('navigation').classList.toggle('closed');
-}
-
-function showPage(id,btn) {
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
- $(id).classList.add('active');
-
- document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
- btn.classList.add('active');
- render();
-}
-
-function exportData() {
- const data = {students,teachers,fees};
- const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = 'ST-MIS-Backup.json';
+function backupData(){
+ const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download="ST-MIS-Backup.json";
  a.click();
  URL.revokeObjectURL(url);
 }
 
-function importData(e) {
- const file = e.target.files[0];
- if (!file) return;
-
- const reader = new FileReader();
- reader.onload = function() {
-  try {
-   const d = JSON.parse(reader.result);
-   if (!Array.isArray(d.students) ||
-       !Array.isArray(d.teachers) ||
-       !Array.isArray(d.fees)) throw Error();
-
-   students = d.students;
-   teachers = d.teachers;
-   fees = d.fees;
-
-   if (saveData()) alert('Backup restored successfully!');
-  } catch(err) {
-   alert('Invalid backup file');
-  }
+function restoreData(){
+ const file=document.getElementById("restoreFile").files[0];
+ if(!file){alert("Choose a backup file first");return;}
+ const reader=new FileReader();
+ reader.onload=function(){
+ try{
+  const data=JSON.parse(reader.result);
+  if(!Array.isArray(data.students)||!Array.isArray(data.teachers)||!Array.isArray(data.fees))throw new Error();
+  db=data;
+  if(!db.next)db.next=db.students.length+1;
+  saveData();
+  alert("Backup restored successfully");
+ }catch(e){alert("Invalid backup file");}
  };
  reader.readAsText(file);
 }
 
-render();
-                    
+renderAll();
+</script>
+</body>
+ </html>
+ 
