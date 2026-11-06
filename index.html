@@ -1533,6 +1533,100 @@ drawExams();
 })();
 </script>
 <!-- END ST-MIS EXAMINATION EDIT UPGRADE -->
+ <!-- ST-MIS FEE BALANCE DELETE ACTION -->
+<script>
+(function(){
+
+  window.stmisDeleteFeeBalance = function(studentId){
+
+    if(!window.db || !db.requiredFees){
+      alert("Fee Balance data not found.");
+      return;
+    }
+
+    const student = (db.students || []).find(
+      s => String(s.id) === String(studentId)
+    );
+
+    const studentName = student
+      ? (student.name || student.fullName || "this student")
+      : "this student";
+
+    if(!confirm(
+      "Are you sure you want to delete the required fee record for " +
+      studentName + "?"
+    )){
+      return;
+    }
+
+    delete db.requiredFees[studentId];
+
+    if(typeof window.saveData === "function"){
+      window.saveData();
+    }
+
+    if(typeof window.renderAll === "function"){
+      window.renderAll();
+    }
+
+    if(typeof window.drawFeeBalance === "function"){
+      window.drawFeeBalance();
+    }
+
+    alert("Fee Balance record deleted successfully.");
+  };
+
+  const oldDraw = window.drawFeeBalance;
+
+  if(typeof oldDraw === "function"){
+    window.drawFeeBalance = function(){
+
+      oldDraw();
+
+      const tables = document.querySelectorAll("#feeBalance table");
+
+      tables.forEach(table => {
+        const header = table.querySelector("thead tr");
+        if(header && !header.innerText.includes("DELETE")){
+          const th = document.createElement("th");
+          th.textContent = "DELETE";
+          header.appendChild(th);
+        }
+
+        table.querySelectorAll("tbody tr").forEach(row => {
+          if(row.querySelector(".stmis-delete-fee")) return;
+
+          const editButton = row.querySelector("button");
+          if(!editButton) return;
+
+          const onclickText = editButton.getAttribute("onclick") || "";
+          const match = onclickText.match(/stxEditRequiredFee\(['"]?([^'")]+)['"]?\)/);
+
+          if(!match) return;
+
+          const id = match[1];
+          const cell = document.createElement("td");
+          const button = document.createElement("button");
+
+          button.textContent = "DELETE";
+          button.className = "stmis-delete-fee";
+          button.style.cssText =
+            "background:#c62828;color:white;padding:7px 10px;border:0;border-radius:6px;";
+
+          button.onclick = function(){
+            window.stmisDeleteFeeBalance(id);
+          };
+
+          cell.appendChild(button);
+          row.appendChild(cell);
+        });
+      });
+    };
+  }
+
+})();
+</script>
+<!-- END FEE BALANCE DELETE -->
 </body>
  </html>
  
