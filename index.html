@@ -1690,6 +1690,94 @@ if(typeof window.drawFeeBalance === "function"){
 
 })();
    </script>
+ <!-- ST-MIS FEE BALANCE DELETE UPGRADE -->
+<style>
+.stmis-balance-delete {
+  background: #d62828 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  margin: 4px !important;
+  cursor: pointer !important;
+}
+</style>
+
+<script>
+(function () {
+
+  function addDeleteButtons() {
+    document.querySelectorAll("button").forEach(function(editBtn) {
+
+      let action =
+        editBtn.getAttribute("onclick") ||
+        (editBtn.onclick ? editBtn.onclick.toString() : "");
+
+      if (!action.includes("stxEditRequiredFee")) return;
+
+      let match = action.match(
+        /stxEditRequiredFee\s*\(\s*['"]?([^'")\s]+)['"]?\s*\)/
+      );
+
+      if (!match) return;
+
+      let id = match[1];
+
+      let container = editBtn.parentElement;
+      if (!container || container.querySelector(
+        '.stmis-balance-delete[data-id="' + id + '"]'
+      )) return;
+
+      let deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.textContent = "DELETE";
+      deleteBtn.className = "stmis-balance-delete";
+      deleteBtn.setAttribute("data-id", id);
+
+      deleteBtn.onclick = function() {
+
+        if (!confirm("Confirm deletion of this student's fee balance?")) {
+          return;
+        }
+
+        if (!window.db || !db.requiredFees) {
+          alert("Fee balance data not found.");
+          return;
+        }
+
+        delete db.requiredFees[id];
+
+        if (typeof window.saveData === "function") {
+          window.saveData();
+        }
+
+        if (typeof window.renderAll === "function") {
+          window.renderAll();
+        } else if (typeof window.drawFeeBalance === "function") {
+          window.drawFeeBalance();
+        }
+
+        alert("Fee balance deleted successfully.");
+      };
+
+      editBtn.insertAdjacentElement("afterend", deleteBtn);
+    });
+  }
+
+  addDeleteButtons();
+
+  const observer = new MutationObserver(addDeleteButtons);
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  window.addEventListener("load", addDeleteButtons);
+
+})();
+</script>
+<!-- END ST-MIS DELETE UPGRADE -->
 </body>
  </html>
  
