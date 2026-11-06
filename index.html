@@ -831,6 +831,374 @@ renderAll();
 </script>
 <!-- END ST-MIS ADDITION -->
  
+<!-- ST-MIS ADVANCED FEATURES ADD-ON -->
+<style>
+.stx-panel{background:#111b2e;border:1px solid #f5c518;border-radius:12px;padding:16px;margin:15px 0}
+.stx-panel input,.stx-panel select{width:100%;padding:11px;margin:7px 0 12px;background:#080d18;color:white;border:1px solid #526079;border-radius:6px}
+.stx-panel label{display:block;color:#ddd}
+.stx-panel table{width:100%;min-width:550px;border-collapse:collapse}
+.stx-panel th,.stx-panel td{padding:10px;border-bottom:1px solid #35435b;text-align:left}
+.stx-panel th{color:#f5c518}
+.stx-scroll{overflow-x:auto}
+.stx-id{background:white;color:#111;padding:18px;border:2px solid #f5c518;border-radius:12px;max-width:330px;margin:15px auto;text-align:center}
+.stx-id img{width:90px;height:100px;object-fit:cover;border:2px solid #222}
+#stxLogin{position:fixed;inset:0;background:#080d18;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
+#stxLoginBox{background:#111b2e;border:2px solid #f5c518;border-radius:14px;padding:22px;width:100%;max-width:400px}
+#stxLoginBox input{width:100%;padding:13px;margin:8px 0 14px;background:#080d18;color:white;border:1px solid #526079;border-radius:6px}
+#stxLoginBox button{width:100%;padding:12px;margin-top:8px;background:#f5c518;color:#111;border:0;border-radius:6px;font-weight:bold}
+.stx-hidden{display:none!important}
+@media print{
+ body *{visibility:hidden}
+ #stxPrintArea,#stxPrintArea *{visibility:visible}
+ #stxPrintArea{position:absolute;left:0;top:0;width:100%}
+}
+</style>
+
+<div id="stxLogin">
+ <div id="stxLoginBox">
+  <h2 style="color:#f5c518;text-align:center">ST-MIS LOGIN</h2>
+  <p id="stxLoginMessage" style="color:white;text-align:center">School Management System</p>
+  <label style="color:white">Username</label>
+  <input id="stxUsername" placeholder="Enter username">
+  <label style="color:white">Password</label>
+  <input id="stxPassword" type="password" placeholder="Enter password">
+  <button id="stxLoginButton">LOGIN</button>
+  <p id="stxLoginError" style="color:#ff7777"></p>
+ </div>
+</div>
+
+<div id="stxPrintArea"></div>
+
+<script>
+(function(){
+"use strict";
+
+const AUTH_KEY="STMIS_LOCAL_LOGIN";
+const BACKUP_KEY="STMIS_AUTOMATIC_BACKUP";
+
+if(!Array.isArray(db.exams))db.exams=[];
+if(!db.requiredFees)db.requiredFees={};
+
+function stxSave(){
+ saveData();
+ try{
+  localStorage.setItem(BACKUP_KEY,JSON.stringify(db));
+  localStorage.setItem(BACKUP_KEY+"_DATE",new Date().toISOString());
+ }catch(e){
+  alert("Automatic backup failed. Please download a manual backup.");
+ }
+}
+
+// Automatic backup whenever existing saveData is called
+const originalSaveData=window.saveData;
+if(typeof originalSaveData==="function"){
+ window.saveData=function(){
+  originalSaveData();
+  try{
+   localStorage.setItem(BACKUP_KEY,JSON.stringify(db));
+   localStorage.setItem(BACKUP_KEY+"_DATE",new Date().toISOString());
+  }catch(e){}
+ };
+}
+
+// Add new navigation buttons
+const nav=document.getElementById("menu");
+const main=document.querySelector("main");
+
+const features=[
+ ["feeBalance","💳 Fee Balance"],
+ ["studentID","🪪 Student ID Card"],
+ ["examinations","📝 Examinations"]
+];
+
+features.forEach(([id,label])=>{
+ if(!document.getElementById("stxNav_"+id)){
+  const b=document.createElement("button");
+  b.id="stxNav_"+id;
+  b.textContent=label;
+  b.onclick=()=>showPage(id);
+  nav.appendChild(b);
+ }
+});
+
+// Create new pages
+function addPage(id,title,content){
+ if(document.getElementById(id))return;
+ const section=document.createElement("section");
+ section.id=id;
+ section.className="page";
+ section.innerHTML=`<h2>${title}</h2>${content}`;
+ main.appendChild(section);
+}
+
+addPage("feeBalance","STUDENT FEE BALANCE",`
+ <div class="stx-panel">
+  <h3>Set Required School Fees</h3>
+  <label>Select Student</label>
+  <select id="stxFeeStudent"></select>
+  <label>Total Required Fees (TZS)</label>
+  <input id="stxRequiredAmount" type="number" min="0" placeholder="Enter required fees">
+  <button class="action" id="stxSaveRequired">SAVE REQUIRED FEES</button>
+ </div>
+ <div class="stx-panel">
+  <h3>Student Fee Balance Report</h3>
+  <div class="stx-scroll"><table>
+   <thead><tr><th>Student</th><th>Required</th><th>Paid</th><th>Balance</th></tr></thead>
+   <tbody id="stxBalanceTable"></tbody>
+  </table></div>
+ </div>
+`);
+
+addPage("studentID","STUDENT ID CARD",`
+ <div class="stx-panel">
+  <label>Select Student</label>
+  <select id="stxIDStudent"></select>
+  <button class="action" id="stxMakeID">GENERATE ID CARD</button>
+  <button class="action secondary" id="stxPrintID">PRINT ID CARD</button>
+  <div id="stxIDPreview"></div>
+ </div>
+`);
+
+addPage("examinations","EXAMINATION MANAGEMENT",`
+ <div class="stx-panel">
+  <h3>Enter Examination Marks</h3>
+  <label>Student</label>
+  <select id="stxExamStudent"></select>
+  <label>Examination Name</label>
+  <input id="stxExamName" placeholder="e.g. Mid Term 2026">
+  <label>Subject</label>
+  <input id="stxSubject" placeholder="Enter subject">
+  <label>Marks (0 - 100)</label>
+  <input id="stxMarks" type="number" min="0" max="100">
+  <button class="action" id="stxSaveExam">SAVE EXAMINATION</button>
+ </div>
+ <div class="stx-panel">
+  <h3>Examination Results</h3>
+  <div class="stx-scroll"><table>
+   <thead><tr><th>Student</th><th>Exam</th><th>Subject</th><th>Marks</th><th>Grade</th><th>Action</th></tr></thead>
+   <tbody id="stxExamTable"></tbody>
+  </table></div>
+  <button class="action" id="stxExamReport">DOWNLOAD RESULTS CSV</button>
+ </div>
+`);
+
+// Student dropdowns
+function fillStudents(){
+ ["stxFeeStudent","stxIDStudent","stxExamStudent"].forEach(id=>{
+  const el=document.getElementById(id);
+  if(!el)return;
+  const old=el.value;
+  el.innerHTML='<option value="">Select student</option>'+
+  db.students.map(s=>`<option value="${s.id}">${escapeHTML(s.name)} - ${escapeHTML(s.admission)}</option>`).join("");
+  el.value=old;
+ });
+}
+
+function paidFor(studentId){
+ return db.fees.filter(f=>Number(f.studentId)===Number(studentId))
+  .reduce((sum,f)=>sum+Number(f.amount||0),0);
+}
+
+function renderBalances(){
+ const body=document.getElementById("stxBalanceTable");
+ if(!body)return;
+ body.innerHTML=db.students.map(s=>{
+  const required=Number(db.requiredFees[s.id]||0);
+  const paid=paidFor(s.id);
+  const balance=Math.max(0,required-paid);
+  return `<tr>
+   <td>${escapeHTML(s.name)}</td>
+   <td>${required.toLocaleString()}</td>
+   <td>${paid.toLocaleString()}</td>
+   <td>${balance.toLocaleString()}</td>
+  </tr>`;
+ }).join("")||'<tr><td colspan="4">No students registered</td></tr>';
+}
+
+document.getElementById("stxSaveRequired").onclick=function(){
+ const id=Number(document.getElementById("stxFeeStudent").value);
+ const amount=Number(document.getElementById("stxRequiredAmount").value);
+ if(!id||!Number.isFinite(amount)||amount<0){
+  alert("Select a student and enter a valid amount");
+  return;
+ }
+ db.requiredFees[id]=amount;
+ saveData();
+ renderBalances();
+ alert("Required school fees saved");
+};
+
+function grade(marks){
+ if(marks>=80)return "A";
+ if(marks>=65)return "B";
+ if(marks>=45)return "C";
+ if(marks>=30)return "D";
+ return "F";
+}
+
+function renderExams(){
+ const body=document.getElementById("stxExamTable");
+ if(!body)return;
+ body.innerHTML=db.exams.map(e=>`
+ <tr>
+  <td>${escapeHTML(e.studentName)}</td>
+  <td>${escapeHTML(e.examName)}</td>
+  <td>${escapeHTML(e.subject)}</td>
+  <td>${e.marks}</td>
+  <td>${grade(Number(e.marks))}</td>
+  <td><button class="action danger" onclick="stxDeleteExam(${e.id})">DELETE</button></td>
+ </tr>
+ `).join("")||'<tr><td colspan="6">No examination results</td></tr>';
+}
+
+document.getElementById("stxSaveExam").onclick=function(){
+ const id=Number(document.getElementById("stxExamStudent").value);
+ const student=db.students.find(s=>Number(s.id)===id);
+ const examName=document.getElementById("stxExamName").value.trim();
+ const subject=document.getElementById("stxSubject").value.trim();
+ const marks=Number(document.getElementById("stxMarks").value);
+ if(!student||!examName||!subject||document.getElementById("stxMarks").value===""||marks<0||marks>100){
+  alert("Complete all fields. Marks must be from 0 to 100.");
+  return;
+ }
+ db.exams.push({
+  id:Date.now(),
+  studentId:id,
+  studentName:student.name,
+  examName,
+  subject,
+  marks
+ });
+ saveData();
+ renderExams();
+ document.getElementById("stxSubject").value="";
+ document.getElementById("stxMarks").value="";
+ alert("Examination result saved");
+};
+
+window.stxDeleteExam=function(id){
+ if(!confirm("Delete this examination result?"))return;
+ db.exams=db.exams.filter(e=>e.id!==id);
+ saveData();
+ renderExams();
+};
+
+// Student ID Card
+document.getElementById("stxMakeID").onclick=function(){
+ const id=Number(document.getElementById("stxIDStudent").value);
+ const s=db.students.find(x=>Number(x.id)===id);
+ if(!s){alert("Select a student first");return;}
+
+ document.getElementById("stxIDPreview").innerHTML=`
+ <div class="stx-id">
+  <h3 style="color:#111">ST MOSES SCHOOL</h3>
+  <p>STUDENT IDENTITY CARD</p>
+  ${s.photo?`<img src="${s.photo}" alt="Student photo">`:"<div style='font-size:55px'>👤</div>"}
+  <h3 style="color:#111">${escapeHTML(s.name)}</h3>
+  <p>Admission: ${escapeHTML(s.admission)}</p>
+  <p>Class: ${escapeHTML(s.className)}</p>
+  <p>Gender: ${escapeHTML(s.gender)}</p>
+  <p style="font-size:11px">ST-MIS STUDENT CARD</p>
+ </div>`;
+};
+
+document.getElementById("stxPrintID").onclick=function(){
+ if(!document.querySelector("#stxIDPreview .stx-id")){
+  alert("Generate a student ID card first");return;
+ }
+ window.print();
+};
+
+// Examination report CSV
+document.getElementById("stxExamReport").onclick=function(){
+ const rows=[["Student","Exam","Subject","Marks","Grade"]];
+ db.exams.forEach(e=>rows.push([
+  e.studentName,e.examName,e.subject,e.marks,grade(Number(e.marks))
+ ]));
+ const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download="ST-MIS-Examination-Results.csv";a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+
+function renderExtra(){
+ fillStudents();
+ renderBalances();
+ renderExams();
+}
+
+const previousRenderAll=window.renderAll;
+if(typeof previousRenderAll==="function"){
+ window.renderAll=function(){
+  previousRenderAll();
+  renderExtra();
+ };
+}
+renderExtra();
+
+// Basic first-use local login setup
+const login=document.getElementById("stxLogin");
+const auth=localStorage.getItem(AUTH_KEY);
+const loginMessage=document.getElementById("stxLoginMessage");
+const loginButton=document.getElementById("stxLoginButton");
+
+if(auth===""){
+ loginMessage.textContent="Create your first administrator account";
+ loginButton.textContent="CREATE ADMIN ACCOUNT";
+}else{
+ loginMessage.textContent="Enter your school system account";
+ loginButton.textContent="LOGIN";
+}
+
+function unlockSystem(){
+ login.style.display="none";
+}
+
+if(sessionStorage.getItem("STMIS_LOGGED_IN")==="yes"){
+ unlockSystem();
+}
+
+loginButton.onclick=function(){
+ const username=document.getElementById("stxUsername").value.trim();
+ const password=document.getElementById("stxPassword").value;
+ const error=document.getElementById("stxLoginError");
+
+ if(!username||!password){
+  error.textContent="Enter username and password";
+  return;
+ }
+
+ const saved=localStorage.getItem(AUTH_KEY);
+
+ if(!saved){
+  localStorage.setItem(AUTH_KEY,JSON.stringify({username,password}));
+  sessionStorage.setItem("STMIS_LOGGED_IN","yes");
+  error.textContent="";
+  unlockSystem();
+  alert("Administrator account created");
+  return;
+ }
+
+ try{
+  const account=JSON.parse(saved);
+  if(account.username===username&&account.password===password){
+   sessionStorage.setItem("STMIS_LOGGED_IN","yes");
+   error.textContent="";
+   unlockSystem();
+  }else{
+   error.textContent="Incorrect username or password";
+  }
+ }catch(e){
+  error.textContent="Login information error";
+ }
+};
+
+})();
+</script>
+<!-- END ST-MIS ADVANCED FEATURES -->
+ 
 </body>
  </html>
  
