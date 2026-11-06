@@ -1919,6 +1919,261 @@ if(typeof window.drawFeeBalance === "function"){
 })();
 </script>
  
+<!-- ST-MIS STUDENT ATTENDANCE SYSTEM -->
+<style>
+#stAttendance {
+  position:fixed; inset:0; z-index:99999;
+  background:#07111f; color:#fff; overflow:auto;
+  padding:18px; display:none; font-family:Arial,sans-serif;
+}
+#stAttendance .panel {
+  max-width:950px; margin:20px auto; background:#13243a;
+  padding:18px; border-radius:14px;
+}
+#stAttendance input,#stAttendance select {
+  width:100%; padding:12px; margin:7px 0 14px;
+  border-radius:7px; border:1px solid #60758c;
+  box-sizing:border-box; background:#fff; color:#111;
+}
+#stAttendance button {
+  padding:11px 15px; border:0; border-radius:7px;
+  margin:4px; cursor:pointer; font-weight:bold;
+}
+#stAttendance .save {background:#f5c542;color:#111}
+#stAttendance .close {background:#d9534f;color:white}
+#stAttendance table {width:100%;border-collapse:collapse;margin-top:15px}
+#stAttendance th,#stAttendance td {
+  padding:9px;border:1px solid #52677e;text-align:left;
+}
+#stAttendance th {background:#203c59}
+#stAttendance .tablewrap {overflow-x:auto}
+#stAttendance h2 {color:#f5c542}
+#stAttendance label {font-weight:bold}
+</style>
+
+<button onclick="stOpenAttendance()"
+style="position:fixed;bottom:18px;right:15px;z-index:99990;
+background:#f5c542;color:#111;padding:14px;border:0;
+border-radius:12px;font-weight:bold;box-shadow:0 3px 12px #000;">
+STUDENT ATTENDANCE
+</button>
+
+<div id="stAttendance">
+ <div class="panel">
+  <h2>ST-MIS STUDENT ATTENDANCE</h2>
+  <p>Daily attendance management system</p>
+  <button class="close" onclick="stCloseAttendance()">CLOSE</button>
+
+  <h3>Record Student Attendance</h3>
+
+  <label>Student Name</label>
+  <input id="staName" list="staStudentNames" placeholder="Enter or select student name">
+  <datalist id="staStudentNames"></datalist>
+
+  <label>Class</label>
+  <input id="staClass" list="staClassNames" placeholder="Enter or select class">
+  <datalist id="staClassNames">
+   <option value="Darasa la Awali">
+   <option value="Darasa la Kwanza">
+   <option value="Darasa la Pili">
+   <option value="Darasa la Tatu">
+   <option value="Darasa la Nne">
+   <option value="Darasa la Tano">
+   <option value="Darasa la Sita">
+  </datalist>
+
+  <label>Attendance Date</label>
+  <input type="date" id="staDate">
+
+  <label>Attendance Status</label>
+  <select id="staStatus">
+   <option value="Present">Present</option>
+   <option value="Absent">Absent</option>
+   <option value="Late">Late</option>
+  </select>
+
+  <button class="save" onclick="stSaveAttendance()">SAVE ATTENDANCE</button>
+
+  <hr>
+  <h3>Attendance Records</h3>
+  <label>Search by date</label>
+  <input type="date" id="staFilter" onchange="stRenderAttendance()">
+
+  <div>
+   <button onclick="stShowAllAttendance()">SHOW ALL</button>
+   <button class="save" onclick="stExportAttendance()">DOWNLOAD EXCEL CSV</button>
+  </div>
+
+  <div id="staSummary"></div>
+  <div class="tablewrap">
+   <table>
+    <thead>
+     <tr>
+      <th>Date</th><th>Student</th><th>Class</th>
+      <th>Status</th><th>Action</th>
+     </tr>
+    </thead>
+    <tbody id="staRows"></tbody>
+   </table>
+  </div>
+ </div>
+</div>
+
+<script>
+(function(){
+ const KEY = "STMIS_STUDENT_ATTENDANCE_V1";
+
+ function getRecords(){
+  try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+  catch(e){ return []; }
+ }
+
+ function saveRecords(records){
+  localStorage.setItem(KEY, JSON.stringify(records));
+ }
+
+ function getStudentList(){
+  try {
+   if(typeof db !== "undefined" && db && Array.isArray(db.students)){
+    return db.students;
+   }
+  } catch(e){}
+  return [];
+ }
+
+ window.stOpenAttendance = function(){
+  document.getElementById("stAttendance").style.display="block";
+  document.getElementById("staDate").value =
+   new Date().toLocaleDateString("en-CA");
+  stLoadStudentNames();
+  stRenderAttendance();
+ };
+
+ window.stCloseAttendance = function(){
+  document.getElementById("stAttendance").style.display="none";
+ };
+
+ window.stLoadStudentNames = function(){
+  const list=getStudentList();
+  const dl=document.getElementById("staStudentNames");
+  dl.innerHTML="";
+  list.forEach(s=>{
+   const name=s.name || s.fullName || s.studentName || "";
+   if(name){
+    const option=document.createElement("option");
+    option.value=name;
+    dl.appendChild(option);
+   }
+  });
+ };
+
+ window.stSaveAttendance = function(){
+  const name=document.getElementById("staName").value.trim();
+  const cls=document.getElementById("staClass").value.trim();
+  const date=document.getElementById("staDate").value;
+  const status=document.getElementById("staStatus").value;
+
+  if(!name || !cls || !date){
+   alert("Please enter student name, class and date.");
+   return;
+  }
+
+  const records=getRecords();
+  const existing=records.findIndex(r=>
+   r.name.toLowerCase()===name.toLowerCase() &&
+   r.date===date
+  );
+
+  const record={name:name, className:cls, date:date, status:status};
+
+  if(existing>=0){
+   if(!confirm("Attendance already exists for this student on this date. Update it?")) return;
+   records[existing]=record;
+  } else {
+   records.push(record);
+  }
+
+  saveRecords(records);
+  document.getElementById("staName").value="";
+  stRenderAttendance();
+  alert("Attendance saved successfully.");
+ };
+
+ window.stRenderAttendance = function(){
+  const filter=document.getElementById("staFilter").value;
+  const records=getRecords().filter(r=>!filter || r.date===filter);
+  const body=document.getElementById("staRows");
+  body.innerHTML="";
+
+  let present=0, absent=0, late=0;
+
+  records.forEach((r,index)=>{
+   if(r.status==="Present") present++;
+   if(r.status==="Absent") absent++;
+   if(r.status==="Late") late++;
+
+   const tr=document.createElement("tr");
+   [r.date,r.name,r.className,r.status].forEach(value=>{
+    const td=document.createElement("td");
+    td.textContent=value;
+    tr.appendChild(td);
+   });
+
+   const action=document.createElement("td");
+   const del=document.createElement("button");
+   del.textContent="DELETE";
+   del.style.background="#d9534f";
+   del.style.color="#fff";
+   del.onclick=()=>stDeleteAttendance(r);
+   action.appendChild(del);
+   tr.appendChild(action);
+   body.appendChild(tr);
+  });
+
+  document.getElementById("staSummary").innerHTML=
+   "<p>Present: <b>"+present+"</b> | Absent: <b>"+absent+
+   "</b> | Late: <b>"+late+"</b> | Total: <b>"+records.length+"</b></p>";
+ };
+
+ window.stDeleteAttendance=function(record){
+  if(!confirm("Delete this attendance record?")) return;
+  const records=getRecords();
+  const index=records.findIndex(r=>
+   r.name===record.name && r.date===record.date
+  );
+  if(index>=0) records.splice(index,1);
+  saveRecords(records);
+  stRenderAttendance();
+ };
+
+ window.stShowAllAttendance=function(){
+  document.getElementById("staFilter").value="";
+  stRenderAttendance();
+ };
+
+ window.stExportAttendance=function(){
+  const records=getRecords();
+  if(!records.length){alert("No attendance records to download.");return;}
+
+  const rows=[["Date","Student Name","Class","Status"]];
+  records.forEach(r=>rows.push([r.date,r.name,r.className,r.status]));
+
+  const csv=rows.map(row=>row.map(v=>
+   '"'+String(v).replace(/"/g,'""')+'"'
+  ).join(",")).join("\n");
+
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="ST-MIS-Attendance-Report.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+ };
+})();
+</script>
+<!-- END ST-MIS ATTENDANCE -->
+    
 </body>
  </html>
  
