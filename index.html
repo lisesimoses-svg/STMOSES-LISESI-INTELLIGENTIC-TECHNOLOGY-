@@ -1,31 +1,228 @@
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ST-MIS | School Management System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ST-MIS | ST Moses School Management System</title>
 <style>
-body{margin:0;font-family:Arial;background:#eef2f7;color:#172554}
-header{background:#102a56;color:white;padding:22px;text-align:center}
-nav{background:#173d70;padding:15px;color:white}
-main{padding:20px}
-.card{background:white;padding:20px;margin:12px 0;border-radius:12px;box-shadow:0 2px 8px #ccc}
-h2{color:#173d70}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#edf2f7;color:#17324d}
+header{background:#073763;color:white;padding:22px;text-align:center}
+nav{display:flex;flex-wrap:wrap;background:#092b4c}
+nav button{flex:1;min-width:100px;padding:15px 8px;border:0;background:#1769aa;color:white;font-weight:bold}
+nav button:active{background:#e5a000}
+main{max-width:950px;margin:auto;padding:15px}
+.page{display:none}
+.page.active{display:block}
+.card{background:white;padding:18px;margin-bottom:15px;border-radius:10px;box-shadow:0 2px 8px #0001}
+input,select{width:100%;padding:13px;margin:7px 0 13px;border:1px solid #aaa;border-radius:6px}
+.btn{padding:12px 18px;background:#0875bd;color:white;border:0;border-radius:6px;font-weight:bold}
+.delete{background:#bd2525}
+.stat{font-size:30px;color:#0875bd;font-weight:bold}
+table{width:100%;border-collapse:collapse}
+td,th{border:1px solid #ddd;padding:9px;text-align:left}
 </style>
 </head>
 <body>
 <header>
 <h1>ST MOSES</h1>
-<p>ST-MIS SCHOOL MANAGEMENT SYSTEM</p>
+<p>INTELLIGENTIC TECHNOLOGY SCHOOL MANAGEMENT SYSTEM</p>
 </header>
-<nav>HOME | STUDENTS | TEACHERS | RESULTS | REPORTS</nav>
+
+<nav>
+<button onclick="openPage('home')">Dashboard</button>
+<button onclick="openPage('students')">Students</button>
+<button onclick="openPage('teachers')">Teachers</button>
+<button onclick="openPage('promotion')">Promotion</button>
+<button onclick="openPage('school')">School Info</button>
+</nav>
+
 <main>
-<h2>Welcome to ST-MIS Dashboard</h2>
-<div class="card"><h3>Students</h3><p>Student management module</p></div>
-<div class="card"><h3>Teachers</h3><p>Teacher management module</p></div>
-<div class="card"><h3>Classes</h3><p>Class management module</p></div>
-<div class="card"><h3>Examinations</h3><p>Examination and results module</p></div>
-<div class="card"><h3>School Reports</h3><p>School performance reports</p></div>
+<section id="home" class="page active">
+<div class="card">
+<h2>Welcome to ST-MIS</h2>
+<p>School Management Dashboard</p>
+</div>
+<div class="card">
+<h3>Total Students</h3>
+<div class="stat" id="studentTotal">0</div>
+</div>
+<div class="card">
+<h3>Total Teachers</h3>
+<div class="stat" id="teacherTotal">0</div>
+</div>
+</section>
+
+<section id="students" class="page">
+<div class="card">
+<h2>Student Registration</h2>
+<input id="sname" placeholder="Student Full Name">
+<select id="gender">
+<option value="">Select Gender</option>
+<option>Male</option><option>Female</option>
+</select>
+<input id="dob" type="date">
+<input id="sclass" placeholder="Class">
+<input id="parent" placeholder="Parent / Guardian">
+<input id="phone" placeholder="Parent Phone">
+<button class="btn" onclick="saveStudent()">SAVE STUDENT</button>
+</div>
+<div class="card">
+<h2>Student List</h2>
+<input id="search" placeholder="Search student" oninput="showStudents()">
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>Name</th><th>Class</th><th>Action</th></tr></thead>
+<tbody id="studentList"></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section id="teachers" class="page">
+<div class="card">
+<h2>Teacher Registration</h2>
+<input id="tname" placeholder="Teacher Full Name">
+<input id="subject" placeholder="Subject">
+<input id="tphone" placeholder="Phone Number">
+<button class="btn" onclick="saveTeacher()">SAVE TEACHER</button>
+</div>
+<div class="card">
+<h2>Teacher List</h2>
+<div id="teacherList"></div>
+</div>
+</section>
+
+<section id="promotion" class="page">
+<div class="card">
+<h2>Student Class Promotion</h2>
+<input id="pname" placeholder="Student Full Name">
+<input id="newclass" placeholder="New Class">
+<button class="btn" onclick="promote()">PROMOTE STUDENT</button>
+<p id="result"></p>
+</div>
+</section>
+
+<section id="school" class="page">
+<div class="card">
+<h2>School Information</h2>
+<p>ST MOSES SCHOOL MANAGEMENT SYSTEM</p>
+<p>Developer: ST MOSES INTELLIGENTIC TECHNOLOGY</p>
+</div>
+</section>
 </main>
+
+<script>
+let students=[];
+let teachers=[];
+
+try{
+students=JSON.parse(localStorage.getItem("stmis_students")||"[]");
+teachers=JSON.parse(localStorage.getItem("stmis_teachers")||"[]");
+}catch(e){}
+
+function openPage(id){
+document.querySelectorAll(".page").forEach(function(p){
+p.classList.remove("active");
+});
+document.getElementById(id).classList.add("active");
+showStudents();
+showTeachers();
+updateDashboard();
+}
+
+function saveStudent(){
+let name=document.getElementById("sname").value.trim();
+let gender=document.getElementById("gender").value;
+let dob=document.getElementById("dob").value;
+let cls=document.getElementById("sclass").value.trim();
+let parent=document.getElementById("parent").value.trim();
+let phone=document.getElementById("phone").value.trim();
+if(!name||!cls){alert("Enter student name and class");return;}
+students.push({name,gender,dob,cls,parent,phone});
+localStorage.setItem("stmis_students",JSON.stringify(students));
+document.getElementById("sname").value="";
+document.getElementById("gender").value="";
+document.getElementById("dob").value="";
+document.getElementById("sclass").value="";
+document.getElementById("parent").value="";
+document.getElementById("phone").value="";
+showStudents();updateDashboard();
+alert("Student registered successfully");
+}
+
+function showStudents(){
+let list=document.getElementById("studentList");
+if(!list)return;
+let q=(document.getElementById("search").value||"").toLowerCase();
+list.innerHTML="";
+students.forEach(function(s,i){
+if(!s.name.toLowerCase().includes(q))return;
+let tr=document.createElement("tr");
+let a=document.createElement("td");
+let b=document.createElement("td");
+let c=document.createElement("td");
+a.textContent=s.name;b.textContent=s.cls;
+let btn=document.createElement("button");
+btn.textContent="Delete";btn.className="btn delete";
+btn.onclick=function(){deleteStudent(i)};
+c.appendChild(btn);tr.append(a,b,c);list.appendChild(tr);
+});
+}
+
+function deleteStudent(i){
+if(confirm("Delete student?")){
+students.splice(i,1);
+localStorage.setItem("stmis_students",JSON.stringify(students));
+showStudents();updateDashboard();
+}
+}
+
+function saveTeacher(){
+let name=document.getElementById("tname").value.trim();
+let subject=document.getElementById("subject").value.trim();
+let phone=document.getElementById("tphone").value.trim();
+if(!name){alert("Enter teacher name");return;}
+teachers.push({name,subject,phone});
+localStorage.setItem("stmis_teachers",JSON.stringify(teachers));
+document.getElementById("tname").value="";
+document.getElementById("subject").value="";
+document.getElementById("tphone").value="";
+showTeachers();updateDashboard();
+alert("Teacher registered successfully");
+}
+
+function showTeachers(){
+let list=document.getElementById("teacherList");
+if(!list)return;
+list.innerHTML="";
+teachers.forEach(function(t){
+let p=document.createElement("p");
+p.textContent=t.name+" - "+t.subject;
+list.appendChild(p);
+});
+}
+
+function promote(){
+let name=document.getElementById("pname").value.trim().toLowerCase();
+let cls=document.getElementById("newclass").value.trim();
+let s=students.find(function(x){return x.name.toLowerCase()===name});
+if(!s||!cls){document.getElementById("result").textContent="Student not found or class missing";return;}
+s.cls=cls;
+localStorage.setItem("stmis_students",JSON.stringify(students));
+document.getElementById("result").textContent="Promotion successful";
+showStudents();updateDashboard();
+}
+
+function updateDashboard(){
+document.getElementById("studentTotal").textContent=students.length;
+document.getElementById("teacherTotal").textContent=teachers.length;
+}
+updateDashboard();
+showStudents();
+showTeachers();
+</script>
 </body>
   </html>
+  
