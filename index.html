@@ -1850,6 +1850,75 @@ if(typeof window.drawFeeBalance === "function"){
 
 })();
 </script>
+ 
+<script>
+/* ST-MIS REPORT CARD: PASS MARK 20/50 */
+(function () {
+  window.stmisPassMark = 20;
+
+  const previousGenerate = window.stmisGenerateReport;
+
+  window.stmisGenerateReport = function () {
+    if (typeof previousGenerate === "function") {
+      previousGenerate();
+    }
+
+    const output = document.getElementById("stmisReportOutput");
+    if (!output) return;
+
+    const rows = output.querySelectorAll("tbody tr");
+    let totalMarks = 0;
+    let passed = 0;
+    let counted = 0;
+
+    rows.forEach(function (row) {
+      const markCell = row.cells[2];
+      const resultCell = row.cells[3];
+
+      if (!markCell || !resultCell) return;
+
+      const marks = parseFloat(markCell.textContent);
+      if (isNaN(marks)) return;
+
+      totalMarks += marks;
+      counted++;
+
+      const isPass = marks >= 20;
+      if (isPass) passed++;
+
+      resultCell.innerHTML =
+        '<b style="color:' + (isPass ? 'green' : 'red') + '">' +
+        (isPass ? 'PASS' : 'FAIL') +
+        '</b>';
+    });
+
+    const average = counted ? (totalMarks / counted).toFixed(2) : "0.00";
+
+    output.querySelectorAll("h3").forEach(function (heading) {
+      if (heading.textContent.includes("Subjects Passed:")) {
+        heading.textContent = "Subjects Passed: " + passed + "/" + counted;
+      }
+
+      if (heading.textContent.includes("Overall Result:")) {
+        heading.textContent =
+          "Overall Result: " +
+          (counted > 0 && passed === counted ? "PASS" : "FAIL");
+      }
+    });
+
+    output.querySelectorAll("p").forEach(function (paragraph) {
+      if (paragraph.textContent.includes("Total Marks:")) {
+        paragraph.textContent = "Total Marks: " + totalMarks + "/" + (counted * 50);
+      }
+
+      if (paragraph.textContent.includes("Average:")) {
+        paragraph.textContent = "Average: " + average + "/50";
+      }
+    });
+  };
+})();
+</script>
+ 
 </body>
  </html>
  
