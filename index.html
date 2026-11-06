@@ -649,6 +649,188 @@ renderAll();
 </script>
 <!-- END ST-MIS ADD-ON -->
  
+<!-- ST-MIS ADDITION: EDIT BUTTONS AND HEADTEACHER PROFILE -->
+<style>
+.stmis-profile{
+ background:#111b2e;
+ border:1px solid #f5c518;
+ border-radius:12px;
+ padding:18px;
+ margin:15px 0;
+ text-align:center;
+}
+.stmis-profile img{
+ width:120px;
+ height:120px;
+ object-fit:cover;
+ border-radius:50%;
+ border:3px solid #f5c518;
+ display:block;
+ margin:12px auto;
+}
+.stmis-edit{
+ background:#f5c518;
+ color:#111;
+ border:0;
+ padding:8px 12px;
+ border-radius:6px;
+ margin:3px;
+ font-weight:bold;
+}
+</style>
+
+<script>
+(function(){
+
+// HEADTEACHER PROFILE
+const settings=document.getElementById("settings");
+
+if(settings && !document.getElementById("headteacherProfile")){
+ const profile=document.createElement("div");
+ profile.id="headteacherProfile";
+ profile.className="stmis-profile";
+ profile.innerHTML=`
+  <h2>HEADTEACHER PROFILE</h2>
+  <img id="headteacherPhoto" alt="Headteacher Photo">
+  <h3 id="headteacherNameDisplay">School Headteacher</h3>
+  <label>Headteacher Full Name</label>
+  <input id="headteacherNameInput" placeholder="Enter headteacher name">
+  <label>Upload Headteacher Picture</label>
+  <input id="headteacherPhotoInput" type="file" accept="image/*">
+  <button class="action" id="saveHeadteacher">SAVE PROFILE</button>
+ `;
+ settings.insertBefore(profile,settings.firstChild);
+}
+
+if(!db.headteacher)db.headteacher={name:"",photo:""};
+
+function showHeadteacher(){
+ const photo=document.getElementById("headteacherPhoto");
+ const name=document.getElementById("headteacherNameDisplay");
+ const input=document.getElementById("headteacherNameInput");
+ if(!photo)return;
+ photo.src=db.headteacher.photo||"";
+ photo.style.display=db.headteacher.photo?"block":"none";
+ name.textContent=db.headteacher.name||"School Headteacher";
+ input.value=db.headteacher.name||"";
+}
+
+document.getElementById("saveHeadteacher")?.addEventListener("click",async()=>{
+ const name=document.getElementById("headteacherNameInput").value.trim();
+ const file=document.getElementById("headteacherPhotoInput").files[0];
+
+ try{
+  let photo=db.headteacher.photo||"";
+  if(file){
+   if(!file.type.startsWith("image/"))throw new Error("Choose a valid image");
+   photo=await new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+     const img=new Image();
+     img.onload=()=>{
+      const canvas=document.createElement("canvas");
+      const scale=Math.min(1,500/Math.max(img.width,img.height));
+      canvas.width=img.width*scale;
+      canvas.height=img.height*scale;
+      canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+      resolve(canvas.toDataURL("image/jpeg",0.65));
+     };
+     img.onerror=()=>reject(new Error("Image could not be opened"));
+     img.src=reader.result;
+    };
+    reader.onerror=()=>reject(new Error("Image upload failed"));
+    reader.readAsDataURL(file);
+   });
+  }
+  db.headteacher={name,photo};
+  saveData();
+  showHeadteacher();
+  alert("Headteacher profile saved successfully");
+ }catch(error){
+  alert(error.message||"Could not save profile");
+ }
+});
+
+// EDIT TEACHER DETAILS
+window.renderTeachers=function(){
+ const table=document.getElementById("teacherTable");
+ if(!table)return;
+ table.innerHTML=db.teachers.map(t=>`
+ <tr>
+  <td>${escapeHTML(t.name)}</td>
+  <td>${escapeHTML(t.phone)}</td>
+  <td>${escapeHTML(t.subject)}</td>
+  <td>
+   <button class="stmis-edit" onclick="editSTTeacher(${t.id})">EDIT</button>
+   <button class="action danger" onclick="deleteTeacher(${t.id})">DELETE</button>
+  </td>
+ </tr>
+ `).join("")||'<tr><td colspan="4">No teachers registered</td></tr>';
+};
+
+window.editSTTeacher=function(id){
+ const t=db.teachers.find(x=>x.id===id);
+ if(!t)return;
+ const name=prompt("Enter teacher full name:",t.name);
+ if(name===null)return;
+ if(!name.trim()){alert("Name cannot be empty");return;}
+ const phone=prompt("Enter teacher phone:",t.phone);
+ if(phone===null)return;
+ const subject=prompt("Enter teaching subject:",t.subject);
+ if(subject===null)return;
+ t.name=name.trim();
+ t.phone=phone.trim();
+ t.subject=subject.trim();
+ saveData();
+ alert("Teacher details updated");
+};
+
+// EDIT SCHOOL FEES
+window.renderFees=function(){
+ const select=document.getElementById("feeStudent");
+ if(select){
+  const old=select.value;
+  select.innerHTML='<option value="">Select student</option>'+
+   db.students.map(s=>`<option value="${s.id}">${escapeHTML(s.name)} - ${escapeHTML(s.admission)}</option>`).join("");
+  if(old)select.value=old;
+ }
+ const table=document.getElementById("feeTable");
+ if(!table)return;
+ table.innerHTML=db.fees.map(f=>`
+ <tr>
+  <td>${escapeHTML(f.studentName)}</td>
+  <td>${Number(f.amount).toLocaleString()}</td>
+  <td>${escapeHTML(f.description)}</td>
+  <td>${escapeHTML(f.date)}</td>
+  <td><button class="stmis-edit" onclick="editSTFee(${f.id})">EDIT</button></td>
+ </tr>
+ `).join("")||'<tr><td colspan="5">No payments recorded</td></tr>';
+};
+
+window.editSTFee=function(id){
+ const f=db.fees.find(x=>x.id===id);
+ if(!f)return;
+ const amount=prompt("Enter corrected payment amount (TZS):",f.amount);
+ if(amount===null)return;
+ if(amount.trim()===""||!Number.isFinite(Number(amount))||Number(amount)<=0){
+  alert("Enter a valid amount");
+  return;
+ }
+ const description=prompt("Enter payment description:",f.description);
+ if(description===null)return;
+ f.amount=Number(amount);
+ f.description=description.trim();
+ saveData();
+ alert("School fee record updated");
+};
+
+showHeadteacher();
+renderAll();
+
+})();
+</script>
+<!-- END ST-MIS ADDITION -->
+ 
 </body>
  </html>
  
