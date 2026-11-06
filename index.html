@@ -1778,6 +1778,78 @@ if(typeof window.drawFeeBalance === "function"){
 })();
 </script>
 <!-- END ST-MIS DELETE UPGRADE -->
+ <!-- ST-MIS FIX FEE BALANCE DELETE -->
+<script>
+(function(){
+
+  window.stmisDeleteStudentBalance = function(id){
+
+    if(!confirm("Delete this student's fee balance?")) return;
+
+    if(!window.db || !db.requiredFees){
+      alert("Fee Balance data not found.");
+      return;
+    }
+
+    delete db.requiredFees[id];
+
+    if(typeof window.saveData === "function"){
+      window.saveData();
+    }
+
+    if(typeof window.renderAll === "function"){
+      window.renderAll();
+    }
+
+    if(typeof window.drawFeeBalance === "function"){
+      window.drawFeeBalance();
+    }
+  };
+
+  const oldDraw = window.drawFeeBalance;
+
+  if(typeof oldDraw === "function"){
+    window.drawFeeBalance = function(){
+
+      oldDraw();
+
+      const area = document.querySelector("#feeBalance");
+      if(!area) return;
+
+      area.querySelectorAll("tr").forEach(row=>{
+
+        if(row.querySelector(".stmis-delete-fixed")) return;
+
+        const edit = row.querySelector("button");
+        if(!edit) return;
+
+        const action = edit.getAttribute("onclick") || "";
+        const match = action.match(/stxEditRequiredFee\(['"]?([^'")]+)['"]?\)/);
+
+        if(!match) return;
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "stmis-delete-fixed";
+        btn.textContent = "DELETE";
+        btn.style.cssText =
+          "background:#d00000;color:white;padding:8px 12px;border:0;border-radius:6px;margin:4px;";
+
+        btn.onclick = function(){
+          window.stmisDeleteStudentBalance(match[1]);
+        };
+
+        edit.insertAdjacentElement("afterend",btn);
+      });
+    };
+  }
+
+  if(typeof window.drawFeeBalance === "function"){
+    window.drawFeeBalance();
+  }
+
+})();
+</script>
 </body>
  </html>
  
