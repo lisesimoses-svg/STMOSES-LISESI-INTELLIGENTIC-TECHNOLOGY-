@@ -1,228 +1,334 @@
 
 <!DOCTYPE html>
-<html lang="sw">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ST-MIS School Management</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ST-MIS | ST Moses School</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080808;color:#f5c542;font-family:Arial}
-header{padding:16px;background:#171717;border-bottom:2px solid #d6a900;display:flex;justify-content:space-between;align-items:center}
-button{padding:11px;background:#d6a900;color:#111;border:0;border-radius:6px;font-weight:bold;margin:4px;cursor:pointer}
-nav{display:none;background:#191919;padding:10px}
-nav button{display:block;width:100%;text-align:left}
-main{padding:15px;max-width:1000px;margin:auto}
+body{margin:0;font-family:Arial;background:#f1f5f9;color:#172554}
+header{background:#102b50;color:white;padding:18px}
+header h2{margin:0}
+header p{margin:6px 0 0;color:#cbd5e1}
+.layout{display:flex;min-height:90vh}
+nav{width:210px;background:#102b50;padding:12px}
+nav button{width:100%;padding:13px;margin:4px 0;background:transparent;color:white;border:0;text-align:left;border-radius:7px;font-size:15px}
+nav button:hover,nav button.active{background:#2563eb}
+main{flex:1;padding:20px;min-width:0}
 .page{display:none}
 .page.active{display:block}
-.card{background:#191919;border:1px solid #a98616;padding:17px;border-radius:9px;text-align:center}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:15px 0}
-.card strong{display:block;font-size:24px;margin-top:8px}
-input,select{width:100%;padding:12px;margin:7px 0;background:#171717;color:white;border:1px solid #a98616;border-radius:5px}
-label{display:block;margin-top:10px}
-table{width:100%;border-collapse:collapse;color:white;margin-top:15px}
-td,th{padding:9px;border:1px solid #66551b;text-align:left}
-th{color:#ffcf32}
-.tablewrap{overflow-x:auto}
-.photo{width:45px;height:45px;object-fit:cover;border-radius:50%}
-h2,h3{color:#ffcf32}
-.danger{background:#a32929;color:white}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+.card{background:white;padding:18px;border-radius:12px;box-shadow:0 2px 8px #0001}
+.card h2{color:#2563eb;margin:8px 0}
+input,select{width:100%;padding:11px;margin:6px 0 12px;border:1px solid #cbd5e1;border-radius:6px}
+label{font-weight:bold}
+.primary{background:#2563eb;color:white;border:0;padding:11px 17px;border-radius:6px}
+.danger{background:#dc2626;color:white;border:0;padding:7px;border-radius:5px}
+table{width:100%;border-collapse:collapse;background:white;margin-top:15px}
+th,td{padding:10px;border:1px solid #ddd;text-align:left}
+th{background:#e2e8f0}
+.table-wrap{overflow-x:auto}
+.formbox{background:white;padding:18px;border-radius:10px;margin-top:15px}
+footer{text-align:center;padding:15px;color:#64748b}
+@media(max-width:650px){
+.layout{display:block}
+nav{width:100%;display:grid;grid-template-columns:repeat(2,1fr)}
+nav button{text-align:center;font-size:13px}
+main{padding:12px}
+}
 </style>
 </head>
 <body>
+
 <header>
-<b>🤖 ST-MIS</b>
-<button onclick="menuToggle()">☰ MENU</button>
+<h2>ST-MIS</h2>
+<p>ST MOSES SCHOOL MANAGEMENT SYSTEM</p>
 </header>
 
-<nav id="menu">
-<button onclick="showPage('dashboard')">Dashboard</button>
-<button onclick="showPage('students')">Wanafunzi</button>
-<button onclick="showPage('teachers')">Walimu</button>
-<button onclick="showPage('fees')">Ada</button>
-<button onclick="showPage('reports')">Ripoti</button>
-<button onclick="showPage('principal')">Mkuu wa shule</button>
+<div class="layout">
+<nav>
+<button class="active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
+<button onclick="showPage('students',this)">👨‍🎓 Students</button>
+<button onclick="showPage('teachers',this)">👨‍🏫 Teachers</button>
+<button onclick="showPage('fees',this)">💰 School Fees</button>
+<button onclick="showPage('classes',this)">📚 Classes</button>
+<button onclick="showPage('reports',this)">📊 Reports</button>
+<button onclick="showPage('settings',this)">⚙️ Settings</button>
 </nav>
 
 <main>
+
 <section id="dashboard" class="page active">
 <h2>Dashboard</h2>
-<p>ST MOSES INTELLIGENT SCHOOL MANAGEMENT SYSTEM</p>
 <div class="cards">
-<div class="card">Wanafunzi<strong id="totalStudents">0</strong></div>
-<div class="card">Walimu<strong id="totalTeachers">0</strong></div>
-<div class="card">Ada inayotakiwa<strong id="expected">0</strong></div>
-<div class="card">Ada iliyolipwa<strong id="collected">0</strong></div>
-<div class="card">Deni<strong id="debt">0</strong></div>
+<div class="card">Total Students<h2 id="studentCount">0</h2></div>
+<div class="card">Total Teachers<h2 id="teacherCount">0</h2></div>
+<div class="card">Total Fees Paid<h2 id="totalFees">0</h2></div>
+<div class="card">Registered Classes<h2 id="classCount">0</h2></div>
 </div>
-<h3>Idadi ya wanafunzi kwa darasa</h3>
-<div class="cards" id="classCards"></div>
+<div class="formbox">
+<h3>Welcome to ST-MIS</h3>
+<p>Manage students, teachers, school fees and academic records in one system.</p>
+</div>
 </section>
 
 <section id="students" class="page">
-<h2>Usajili wa Wanafunzi</h2>
+<h2>Student Registration</h2>
+<div class="formbox">
 <form id="studentForm">
-<label>Jina la mwanafunzi</label><input id="sname" required>
-<label>Jinsia</label><select id="sgender"><option>Me</option><option>Ke</option></select>
-<label>Darasa</label><select id="sclass"><option>Awali</option><option>Darasa la Kwanza</option><option>Darasa la Pili</option><option>Darasa la Tatu</option><option>Darasa la Nne</option></select>
-<label>Jina la mzazi/mlezi</label><input id="guardian">
-<label>Simu ya mzazi</label><input id="phone">
-<label>Picha ya mwanafunzi</label><input id="photo" type="file" accept="image/*">
-<button type="submit">Hifadhi mwanafunzi</button>
+<input type="hidden" id="studentEdit">
+<label>Student Full Name</label>
+<input id="studentName" required placeholder="Enter full name">
+<label>Admission Number</label>
+<input id="admission" required placeholder="Enter admission number">
+<label>Class</label>
+<select id="studentClass">
+<option>Baby Class</option><option>Middle Class</option>
+<option>Pre-Unit</option><option>Standard One</option>
+<option>Standard Two</option><option>Standard Three</option>
+<option>Standard Four</option><option>Standard Five</option>
+<option>Standard Six</option><option>Standard Seven</option>
+</select>
+<label>Gender</label>
+<select id="gender"><option>Male</option><option>Female</option></select>
+<label>Parent / Guardian Phone</label>
+<input id="parentPhone" placeholder="Phone number">
+<button class="primary">Save Student</button>
 </form>
-<h3>Orodha ya Wanafunzi</h3>
-<input id="studentSearch" placeholder="Tafuta mwanafunzi..." oninput="renderStudents()">
-<div class="tablewrap"><table><thead><tr><th>Picha</th><th>Jina</th><th>Darasa</th><th>Mzazi</th><th>Hatua</th></tr></thead><tbody id="studentRows"></tbody></table></div>
+</div>
+<h3>Student Records</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Name</th><th>Admission</th><th>Class</th><th>Gender</th><th>Actions</th></tr></thead>
+<tbody id="studentTable"></tbody>
+</table>
+</div>
 </section>
 
 <section id="teachers" class="page">
-<h2>Usajili wa Walimu</h2>
+<h2>Teacher Registration</h2>
+<div class="formbox">
 <form id="teacherForm">
-<label>Jina la mwalimu</label><input id="tname" required>
-<label>Somo</label><input id="subject">
-<label>Namba ya simu</label><input id="tphone">
-<button type="submit">Hifadhi mwalimu</button>
+<label>Teacher Name</label>
+<input id="teacherName" required>
+<label>Phone Number</label>
+<input id="teacherPhone">
+<label>Subject / Department</label>
+<input id="teacherSubject">
+<button class="primary">Save Teacher</button>
 </form>
-<div class="tablewrap"><table><thead><tr><th>Jina</th><th>Somo</th><th>Simu</th><th>Hatua</th></tr></thead><tbody id="teacherRows"></tbody></table></div>
+</div>
+<div class="table-wrap">
+<table><thead><tr><th>Name</th><th>Phone</th><th>Department</th><th>Action</th></tr></thead>
+<tbody id="teacherTable"></tbody></table>
+</div>
 </section>
 
 <section id="fees" class="page">
-<h2>Usimamizi wa Ada</h2>
+<h2>School Fees Management</h2>
+<div class="formbox">
 <form id="feeForm">
-<label>Mwanafunzi</label><select id="feeStudent"></select>
-<label>Ada inayotakiwa (TSh)</label><input id="feeExpected" type="number" min="0" required>
-<label>Ada iliyolipwa jumla (TSh)</label><input id="feePaid" type="number" min="0" required>
-<label>Tarehe ya malipo</label><input id="feeDate" type="date">
-<button type="submit">Hifadhi taarifa za ada</button>
+<label>Student Name</label>
+<input id="feeStudent" required>
+<label>Amount Paid (TZS)</label>
+<input id="feeAmount" type="number" min="1" required>
+<label>Payment Description</label>
+<input id="feeDescription" placeholder="Tuition / Registration / Other">
+<button class="primary">Record Payment</button>
 </form>
-<div class="tablewrap"><table><thead><tr><th>Mwanafunzi</th><th>Ada</th><th>Amelipa</th><th>Deni</th></tr></thead><tbody id="feeRows"></tbody></table></div>
+</div>
+<div class="table-wrap">
+<table><thead><tr><th>Student</th><th>Amount</th><th>Description</th><th>Date</th></tr></thead>
+<tbody id="feeTable"></tbody></table>
+</div>
+</section>
+
+<section id="classes" class="page">
+<h2>Student Promotion & Class Management</h2>
+<div class="formbox">
+<label>Find Student by Admission Number</label>
+<input id="promotionAdmission" placeholder="Admission number">
+<label>New Class</label>
+<select id="newClass">
+<option>Baby Class</option><option>Middle Class</option>
+<option>Pre-Unit</option><option>Standard One</option>
+<option>Standard Two</option><option>Standard Three</option>
+<option>Standard Four</option><option>Standard Five</option>
+<option>Standard Six</option><option>Standard Seven</option>
+</select>
+<button class="primary" onclick="changeClass()">Promote Student</button>
+<button class="danger" onclick="changeClass(true)">Return Student to Class</button>
+</div>
+<div class="formbox">
+<h3>Class Records</h3>
+<div id="classRecords"></div>
+</div>
 </section>
 
 <section id="reports" class="page">
-<h2>Ripoti za Wanafunzi</h2>
-<label>Chagua ripoti kupakia</label><input type="file" id="reportFile" accept=".pdf,.jpg,.png">
-<button onclick="uploadReport()">Hifadhi Ripoti</button>
-<div id="reportList"></div>
+<h2>School Reports</h2>
+<div class="cards">
+<div class="card">Students<h2 id="reportStudents">0</h2></div>
+<div class="card">Teachers<h2 id="reportTeachers">0</h2></div>
+<div class="card">Total Collections<h2 id="reportFees">0</h2></div>
+</div>
+<button class="primary" onclick="window.print()">Print Report</button>
 </section>
 
-<section id="principal" class="page">
-<h2>Taarifa za Mkuu wa Shule</h2>
-<label>Jina</label><input id="pname" placeholder="Jina la mkuu wa shule">
-<label>Picha</label><input id="pPhoto" type="file" accept="image/*">
-<button onclick="savePrincipal()">Hifadhi taarifa</button>
-<p id="principalInfo"></p>
+<section id="settings" class="page">
+<h2>System Settings</h2>
+<div class="formbox">
+<h3>School Information</h3>
+<p><b>School:</b> ST MOSES SCHOOL</p>
+<p><b>System:</b> ST-MIS</p>
+<p><b>Developer:</b> Moses Freday Lisesi</p>
+<button class="primary" onclick="exportData()">Download Data Backup</button>
+<label>Restore Backup</label>
+<input type="file" id="backupFile" accept=".json" onchange="importData(event)">
+</div>
 </section>
+
 </main>
+</div>
 
-<footer><p>ST-MIS © ST Moses Intelligent School Management</p></footer>
+<footer>ST-MIS © 2026 | ST MOSES INTELLIGENTIC TECHNOLOGY</footer>
 
 <script>
-const classes=['Awali','Darasa la Kwanza','Darasa la Pili','Darasa la Tatu','Darasa la Nne'];
 let students=JSON.parse(localStorage.getItem('st_students')||'[]');
 let teachers=JSON.parse(localStorage.getItem('st_teachers')||'[]');
-let fees=JSON.parse(localStorage.getItem('st_fees')||'{}');
-let reports=JSON.parse(localStorage.getItem('st_reports')||'[]');
+let fees=JSON.parse(localStorage.getItem('st_fees')||'[]');
 
 function save(){
 localStorage.setItem('st_students',JSON.stringify(students));
 localStorage.setItem('st_teachers',JSON.stringify(teachers));
 localStorage.setItem('st_fees',JSON.stringify(fees));
-localStorage.setItem('st_reports',JSON.stringify(reports));
+render();
 }
-function menuToggle(){
-let m=document.getElementById('menu');
-m.style.display=m.style.display==='block'?'none':'block';
-}
-function showPage(id){
+
+function showPage(id,btn){
 document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
 document.getElementById(id).classList.add('active');
-document.getElementById('menu').style.display='none';
-refresh();
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+render();
 }
-function refresh(){
-renderStudents();renderTeachers();renderFees();renderReports();dashboard();
+
+function safe(v){
+return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
-function dashboard(){
-document.getElementById('totalStudents').textContent=students.length;
-document.getElementById('totalTeachers').textContent=teachers.length;
-let expected=0,paid=0;
-Object.values(fees).forEach(f=>{expected+=Number(f.expected);paid+=Number(f.paid)});
-document.getElementById('expected').textContent=expected.toLocaleString();
-document.getElementById('collected').textContent=paid.toLocaleString();
-document.getElementById('debt').textContent=Math.max(0,expected-paid).toLocaleString();
-document.getElementById('classCards').innerHTML=classes.map(c=>
-`<div class="card" onclick="filterClass('${c}')">${c}<strong>${students.filter(s=>s.className===c).length}</strong></div>`).join('');
-}
-function filterClass(c){
-showPage('students');
-document.getElementById('studentSearch').value='';
-renderStudents(c);
-}
-document.getElementById('studentForm').addEventListener('submit',async e=>{
+
+document.getElementById('studentForm').onsubmit=function(e){
 e.preventDefault();
-let file=document.getElementById('photo').files[0];
-let picture=file?await readFile(file):'';
-students.push({id:Date.now(),name:sname.value,gender:sgender.value,className:sclass.value,guardian:guardian.value,phone:phone.value,picture});
-save();e.target.reset();refresh();alert('Mwanafunzi amehifadhiwa');
-});
-function renderStudents(classFilter=''){
-let q=document.getElementById('studentSearch').value.toLowerCase();
-let list=students.filter(s=>(!classFilter||s.className===classFilter)&&s.name.toLowerCase().includes(q));
-document.getElementById('studentRows').innerHTML=list.map(s=>`<tr><td>${s.picture?`<img class="photo" src="${s.picture}">`:'-'}</td><td>${s.name}</td><td>${s.className}</td><td>${s.guardian||''}</td><td><button class="danger" onclick="deleteStudent(${s.id})">Futa</button><button onclick="promote(${s.id})">Pandisha</button></td></tr>`).join('');
-document.getElementById('feeStudent').innerHTML=students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+let id=document.getElementById('studentEdit').value;
+let data={
+name:studentName.value.trim(),
+admission:admission.value.trim(),
+cls:studentClass.value,
+gender:gender.value,
+phone:parentPhone.value
+};
+if(id){
+let index=students.findIndex(s=>s.id===id);
+if(index>=0) students[index]= {...students[index],...data};
+}else{
+if(students.some(s=>s.admission===data.admission)){alert('Admission number already exists');return;}
+students.push({id:String(Date.now()),...data});
 }
+this.reset();studentEdit.value='';
+save();
+};
+
+function editStudent(id){
+let s=students.find(x=>x.id===id);if(!s)return;
+studentEdit.value=s.id;studentName.value=s.name;
+admission.value=s.admission;studentClass.value=s.cls;
+gender.value=s.gender;parentPhone.value=s.phone||'';
+document.getElementById('students').scrollIntoView();
+}
+
 function deleteStudent(id){
-if(confirm('Una uhakika unataka kufuta?')){students=students.filter(s=>s.id!==id);delete fees[id];save();refresh()}
+if(confirm('Delete this student?')){students=students.filter(s=>s.id!==id);save();}
 }
-function promote(id){
-let s=students.find(x=>x.id===id),i=classes.indexOf(s.className);
-if(i>=0&&i<classes.length-1){s.className=classes[i+1];save();refresh();alert('Mwanafunzi amepandishwa darasa')}
-else alert('Hakuna darasa linalofuata kwenye orodha');
+
+document.getElementById('teacherForm').onsubmit=function(e){
+e.preventDefault();
+teachers.push({id:String(Date.now()),name:teacherName.value,phone:teacherPhone.value,subject:teacherSubject.value});
+this.reset();save();
+};
+
+function deleteTeacher(id){
+if(confirm('Delete this teacher?')){teachers=teachers.filter(t=>t.id!==id);save();}
 }
-document.getElementById('teacherForm').addEventListener('submit',e=>{
-e.preventDefault();teachers.push({id:Date.now(),name:tname.value,subject:subject.value,phone:tphone.value});
-save();e.target.reset();refresh();alert('Mwalimu amehifadhiwa');
-});
-function renderTeachers(){
-document.getElementById('teacherRows').innerHTML=teachers.map(t=>`<tr><td>${t.name}</td><td>${t.subject}</td><td>${t.phone}</td><td><button class="danger" onclick="deleteTeacher(${t.id})">Futa</button></td></tr>`).join('');
+
+document.getElementById('feeForm').onsubmit=function(e){
+e.preventDefault();
+fees.push({student:feeStudent.value,amount:Number(feeAmount.value),description:feeDescription.value,date:new Date().toLocaleDateString()});
+this.reset();save();
+};
+
+function changeClass(reverse=false){
+let adm=promotionAdmission.value.trim();
+let s=students.find(x=>x.admission===adm);
+if(!s){alert('Student not found');return;}
+let old=s.cls;s.cls=newClass.value;
+save();
+alert((reverse?'Class changed back':'Student promoted')+': '+old+' → '+s.cls);
 }
-function deleteTeacher(id){teachers=teachers.filter(t=>t.id!==id);save();refresh()}
-document.getElementById('feeForm').addEventListener('submit',e=>{
-e.preventDefault();let id=feeStudent.value;
-fees[id]={expected:Number(feeExpected.value),paid:Number(feePaid.value),date:feeDate.value};
-save();e.target.reset();refresh();alert('Taarifa za ada zimehifadhiwa');
-});
-function renderFees(){
-document.getElementById('feeRows').innerHTML=students.map(s=>{
-let f=fees[s.id]||{expected:0,paid:0};
-return `<tr><td>${s.name}</td><td>${f.expected}</td><td>${f.paid}</td><td>${Math.max(0,f.expected-f.paid)}</td></tr>`;
-}).join('');
+
+function render(){
+studentCount.textContent=students.length;
+teacherCount.textContent=teachers.length;
+classCount.textContent=new Set(students.map(s=>s.cls)).size;
+let total=fees.reduce((a,f)=>a+f.amount,0);
+totalFees.textContent=total.toLocaleString()+' TZS';
+reportStudents.textContent=students.length;
+reportTeachers.textContent=teachers.length;
+reportFees.textContent=total.toLocaleString()+' TZS';
+
+studentTable.innerHTML=students.map(s=>`<tr>
+<td>${safe(s.name)}</td><td>${safe(s.admission)}</td>
+<td>${safe(s.cls)}</td><td>${safe(s.gender)}</td>
+<td><button class="primary" onclick="editStudent('${s.id}')">Edit</button>
+<button class="danger" onclick="deleteStudent('${s.id}')">Delete</button></td>
+</tr>`).join('');
+
+teacherTable.innerHTML=teachers.map(t=>`<tr>
+<td>${safe(t.name)}</td><td>${safe(t.phone)}</td>
+<td>${safe(t.subject)}</td><td><button class="danger" onclick="deleteTeacher('${t.id}')">Delete</button></td>
+</tr>`).join('');
+
+feeTable.innerHTML=fees.map(f=>`<tr>
+<td>${safe(f.student)}</td><td>${f.amount.toLocaleString()} TZS</td>
+<td>${safe(f.description)}</td><td>${safe(f.date)}</td></tr>`).join('');
+
+let classes=[...new Set(students.map(s=>s.cls))];
+classRecords.innerHTML=classes.map(c=>`<p><b>${safe(c)}:</b> ${students.filter(s=>s.cls===c).length} students</p>`).join('')||'No class records yet.';
 }
-function readFile(file){return new Promise((resolve,reject)=>{let r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
-async function uploadReport(){
-let file=document.getElementById('reportFile').files[0];
-if(!file)return alert('Chagua ripoti kwanza');
-if(file.size>500000){return alert('Faili ni kubwa. Chagua faili lisilozidi 500KB.')}
-let data=await readFile(file);
-reports.push({name:file.name,data});
-save();renderReports();document.getElementById('reportFile').value='';
+
+function exportData(){
+let data={students,teachers,fees};
+let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+let a=document.createElement('a');
+a.href=URL.createObjectURL(blob);a.download='ST-MIS-Backup.json';a.click();
+URL.revokeObjectURL(a.href);
 }
-function renderReports(){
-document.getElementById('reportList').innerHTML=reports.map((r,i)=>`<p>${r.name} <a href="${r.data}" download="${r.name}" style="color:white">Pakua</a> <button class="danger" onclick="deleteReport(${i})">Futa</button></p>`).join('');
+
+function importData(e){
+let file=e.target.files[0];if(!file)return;
+let reader=new FileReader();
+reader.onload=function(){
+try{
+let d=JSON.parse(reader.result);
+if(!Array.isArray(d.students)||!Array.isArray(d.teachers)||!Array.isArray(d.fees))throw Error();
+students=d.students;teachers=d.teachers;fees=d.fees;save();alert('Backup restored successfully');
+}catch(err){alert('Invalid backup file');}
+};
+reader.readAsText(file);
 }
-function deleteReport(i){reports.splice(i,1);save();renderReports()}
-async function savePrincipal(){
-let file=document.getElementById('pPhoto').files[0],photo='';
-if(file){if(file.size>500000)return alert('Picha ni kubwa sana');photo=await readFile(file)}
-localStorage.setItem('st_principal',JSON.stringify({name:document.getElementById('pname').value,photo}));
-showPrincipal();
-}
-function showPrincipal(){
-let p=JSON.parse(localStorage.getItem('st_principal')||'{}');
-document.getElementById('principalInfo').innerHTML=(p.name||'')+(p.photo?`<br><img class="photo" src="${p.photo}">`:'');
-}
-showPrincipal();refresh();
+
+render();
 </script>
 </body>
  </html>
- 
+                                                                                   
