@@ -3,189 +3,214 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ST-MIS | ST Moses School</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ST-MIS Technology System</title>
 <style>
+:root{--black:#080a0d;--panel:#12171d;--yellow:#ffd600;--white:#f5f5f5;--gray:#9299a3}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#f1f5f9;color:#172554}
-header{background:#102b50;color:white;padding:18px}
-header h2{margin:0}
-header p{margin:6px 0 0;color:#cbd5e1}
-.layout{display:flex;min-height:90vh}
-nav{width:210px;background:#102b50;padding:12px}
-nav button{width:100%;padding:13px;margin:4px 0;background:transparent;color:white;border:0;text-align:left;border-radius:7px;font-size:15px}
-nav button:hover,nav button.active{background:#2563eb}
-main{flex:1;padding:20px;min-width:0}
+body{margin:0;background:var(--black);color:var(--white);font-family:Arial,sans-serif}
+header{height:75px;background:#050607;border-bottom:1px solid #393000;padding:15px 22px;display:flex;align-items:center;justify-content:space-between}
+header h2{color:var(--yellow);margin:0;letter-spacing:2px}
+header small{color:var(--gray)}
+.layout{display:flex;min-height:calc(100vh - 75px)}
+nav{width:220px;background:#101318;padding:15px;border-right:1px solid #393000;flex-shrink:0}
+nav button{width:100%;padding:14px;margin:5px 0;background:transparent;color:#ddd;border:1px solid transparent;text-align:left;border-radius:7px;font-size:14px}
+nav button:hover,nav button.active{background:#28230c;color:var(--yellow);border-color:var(--yellow)}
+main{flex:1;padding:22px;min-width:0}
 .page{display:none}
 .page.active{display:block}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
-.card{background:white;padding:18px;border-radius:12px;box-shadow:0 2px 8px #0001}
-.card h2{color:#2563eb;margin:8px 0}
-input,select{width:100%;padding:11px;margin:6px 0 12px;border:1px solid #cbd5e1;border-radius:6px}
-label{font-weight:bold}
-.primary{background:#2563eb;color:white;border:0;padding:11px 17px;border-radius:6px}
-.danger{background:#dc2626;color:white;border:0;padding:7px;border-radius:5px}
-table{width:100%;border-collapse:collapse;background:white;margin-top:15px}
-th,td{padding:10px;border:1px solid #ddd;text-align:left}
-th{background:#e2e8f0}
+h2,h3{color:var(--yellow)}
+.hero{background:linear-gradient(120deg,#191b1e,#302800);border:1px solid #806b00;border-radius:15px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.hero h1{color:var(--yellow);font-size:27px}
+.hero p{color:#ddd;line-height:1.7}
+.art{width:290px;max-width:100%}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:20px}
+.card,.formbox{background:var(--panel);border:1px solid #3b330d;border-radius:11px;padding:17px}
+.card h2{font-size:27px;margin-bottom:5px}
+.card p{color:var(--gray)}
+label{display:block;color:var(--yellow);margin-top:10px;font-size:14px}
+input,select{width:100%;padding:12px;background:#080a0d;color:white;border:1px solid #625500;border-radius:6px;margin:7px 0}
+button{cursor:pointer}
+.primary{background:var(--yellow);color:#080808;border:0;padding:11px 17px;border-radius:6px;font-weight:bold;margin:5px}
+.danger{background:#a32626;color:white;border:0;padding:9px;border-radius:5px;margin:3px}
+table{width:100%;border-collapse:collapse;background:#11151a;margin-top:15px;min-width:550px}
+th,td{padding:12px;border:1px solid #343434;text-align:left}
+th{color:var(--yellow);background:#24200c}
+td{color:#eee}
 .table-wrap{overflow-x:auto}
-.formbox{background:white;padding:18px;border-radius:10px;margin-top:15px}
-footer{text-align:center;padding:15px;color:#64748b}
+footer{text-align:center;color:#888;padding:20px}
 @media(max-width:650px){
 .layout{display:block}
-nav{width:100%;display:grid;grid-template-columns:repeat(2,1fr)}
-nav button{text-align:center;font-size:13px}
+nav{width:100%;display:grid;grid-template-columns:repeat(2,1fr);gap:3px}
+nav button{text-align:center;font-size:12px;padding:12px 4px}
 main{padding:12px}
+.hero h1{font-size:22px}
 }
 </style>
 </head>
 <body>
 
 <header>
+<div>
 <h2>ST-MIS</h2>
-<p>ST MOSES SCHOOL MANAGEMENT SYSTEM</p>
+<small>ST MOSES INTELLIGENTIC TECHNOLOGY</small>
+</div>
+<div style="color:#ffd600">SYSTEM ONLINE ●</div>
 </header>
 
 <div class="layout">
 <nav>
-<button class="active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
-<button onclick="showPage('students',this)">👨‍🎓 Students</button>
-<button onclick="showPage('teachers',this)">👨‍🏫 Teachers</button>
-<button onclick="showPage('fees',this)">💰 School Fees</button>
-<button onclick="showPage('classes',this)">📚 Classes</button>
-<button onclick="showPage('reports',this)">📊 Reports</button>
-<button onclick="showPage('settings',this)">⚙️ Settings</button>
+<button class="active" onclick="showPage('dashboard',this)">⌂ DASHBOARD</button>
+<button onclick="showPage('students',this)">♟ STUDENTS</button>
+<button onclick="showPage('teachers',this)">♙ TEACHERS</button>
+<button onclick="showPage('fees',this)">＄ SCHOOL FEES</button>
+<button onclick="showPage('classes',this)">▣ CLASSES</button>
+<button onclick="showPage('reports',this)">▤ REPORTS</button>
+<button onclick="showPage('settings',this)">⚙ SETTINGS</button>
 </nav>
 
 <main>
 
 <section id="dashboard" class="page active">
-<h2>Dashboard</h2>
-<div class="cards">
-<div class="card">Total Students<h2 id="studentCount">0</h2></div>
-<div class="card">Total Teachers<h2 id="teacherCount">0</h2></div>
-<div class="card">Total Fees Paid<h2 id="totalFees">0</h2></div>
-<div class="card">Registered Classes<h2 id="classCount">0</h2></div>
+
+<div class="hero">
+<div>
+<h1>WELCOME TO ST-MIS</h1>
+<p>ST MOSES SCHOOL MANAGEMENT SYSTEM</p>
+<p>Intelligent School Management<br>Digital Education Technology</p>
 </div>
-<div class="formbox">
-<h3>Welcome to ST-MIS</h3>
-<p>Manage students, teachers, school fees and academic records in one system.</p>
+
+<!-- Computer and Robot Illustration -->
+<svg class="art" viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+<rect x="20" y="35" width="190" height="125" rx="10" fill="#050607" stroke="#ffd600" stroke-width="4"/>
+<rect x="31" y="46" width="168" height="102" rx="4" fill="#171d24"/>
+<text x="115" y="82" text-anchor="middle" fill="#ffd600" font-size="15" font-weight="bold">ST-MIS</text>
+<path d="M75 104 H155 M75 114 H140 M75 124 H160" stroke="#ffd600" stroke-width="3" stroke-linecap="round"/>
+<path d="M92 160 L84 181 H145 L137 160" fill="#777"/>
+<path d="M55 184 H174" stroke="#ffd600" stroke-width="5" stroke-linecap="round"/>
+<!-- Robot -->
+<rect x="224" y="78" width="76" height="82" rx="18" fill="#c7cbd0" stroke="#ffd600" stroke-width="3"/>
+<rect x="235" y="91" width="54" height="39" rx="10" fill="#101820"/>
+<circle cx="249" cy="109" r="6" fill="#ffd600"/>
+<circle cx="275" cy="109" r="6" fill="#ffd600"/>
+<path d="M250 120 Q262 130 275 120" stroke="#ffd600" fill="none" stroke-width="2"/>
+<path d="M262 78 V59 M252 59 H272" stroke="#ffd600" stroke-width="4" stroke-linecap="round"/>
+<circle cx="262" cy="54" r="6" fill="#ffd600"/>
+<path d="M224 105 H212 M300 105 H312" stroke="#ffd600" stroke-width="5" stroke-linecap="round"/>
+<path d="M239 160 L232 185 M285 160 L292 185" stroke="#c7cbd0" stroke-width="10" stroke-linecap="round"/>
+<text x="160" y="210" text-anchor="middle" fill="#ffd600" font-size="11">INTELLIGENT TECHNOLOGY</text>
+</svg>
+</div>
+
+<div class="cards">
+<div class="card"><p>TOTAL STUDENTS</p><h2 id="studentCount">0</h2></div>
+<div class="card"><p>TOTAL TEACHERS</p><h2 id="teacherCount">0</h2></div>
+<div class="card"><p>TOTAL FEES PAID</p><h2 id="totalFees">0</h2></div>
+<div class="card"><p>ACTIVE CLASSES</p><h2 id="classCount">0</h2></div>
+</div>
+
+<div class="formbox" style="margin-top:20px">
+<h3>ST-MIS CONTROL CENTER</h3>
+<p>Manage your school digitally using one intelligent platform.</p>
 </div>
 </section>
 
 <section id="students" class="page">
-<h2>Student Registration</h2>
+<h2>STUDENT MANAGEMENT</h2>
 <div class="formbox">
 <form id="studentForm">
 <input type="hidden" id="studentEdit">
 <label>Student Full Name</label>
-<input id="studentName" required placeholder="Enter full name">
+<input id="studentName" required>
 <label>Admission Number</label>
-<input id="admission" required placeholder="Enter admission number">
+<input id="admission" required>
 <label>Class</label>
 <select id="studentClass">
-<option>Baby Class</option><option>Middle Class</option>
-<option>Pre-Unit</option><option>Standard One</option>
-<option>Standard Two</option><option>Standard Three</option>
+<option>Baby Class</option><option>Middle Class</option><option>Pre-Unit</option>
+<option>Standard One</option><option>Standard Two</option><option>Standard Three</option>
 <option>Standard Four</option><option>Standard Five</option>
 <option>Standard Six</option><option>Standard Seven</option>
 </select>
 <label>Gender</label>
 <select id="gender"><option>Male</option><option>Female</option></select>
-<label>Parent / Guardian Phone</label>
-<input id="parentPhone" placeholder="Phone number">
-<button class="primary">Save Student</button>
+<label>Parent Phone</label>
+<input id="parentPhone">
+<button class="primary">SAVE STUDENT</button>
 </form>
 </div>
-<h3>Student Records</h3>
 <div class="table-wrap">
-<table>
-<thead><tr><th>Name</th><th>Admission</th><th>Class</th><th>Gender</th><th>Actions</th></tr></thead>
-<tbody id="studentTable"></tbody>
-</table>
+<table><thead><tr><th>Name</th><th>Admission</th><th>Class</th><th>Gender</th><th>Actions</th></tr></thead>
+<tbody id="studentTable"></tbody></table>
 </div>
 </section>
 
 <section id="teachers" class="page">
-<h2>Teacher Registration</h2>
+<h2>TEACHER MANAGEMENT</h2>
 <div class="formbox">
 <form id="teacherForm">
-<label>Teacher Name</label>
-<input id="teacherName" required>
-<label>Phone Number</label>
-<input id="teacherPhone">
-<label>Subject / Department</label>
-<input id="teacherSubject">
-<button class="primary">Save Teacher</button>
+<label>Teacher Full Name</label><input id="teacherName" required>
+<label>Phone Number</label><input id="teacherPhone">
+<label>Department / Subject</label><input id="teacherSubject">
+<button class="primary">REGISTER TEACHER</button>
 </form>
 </div>
 <div class="table-wrap">
-<table><thead><tr><th>Name</th><th>Phone</th><th>Department</th><th>Action</th></tr></thead>
-<tbody id="teacherTable"></tbody></table>
+<table><thead><tr><th>Name</th><th>Phone</th><th>Department</th><th>Action</th></tr></thead><tbody id="teacherTable"></tbody></table>
 </div>
 </section>
 
 <section id="fees" class="page">
-<h2>School Fees Management</h2>
+<h2>SCHOOL FEES MANAGEMENT</h2>
 <div class="formbox">
 <form id="feeForm">
-<label>Student Name</label>
-<input id="feeStudent" required>
-<label>Amount Paid (TZS)</label>
-<input id="feeAmount" type="number" min="1" required>
-<label>Payment Description</label>
-<input id="feeDescription" placeholder="Tuition / Registration / Other">
-<button class="primary">Record Payment</button>
+<label>Student Name</label><input id="feeStudent" required>
+<label>Amount Paid (TZS)</label><input id="feeAmount" type="number" min="1" required>
+<label>Payment Description</label><input id="feeDescription">
+<button class="primary">RECORD PAYMENT</button>
 </form>
 </div>
 <div class="table-wrap">
-<table><thead><tr><th>Student</th><th>Amount</th><th>Description</th><th>Date</th></tr></thead>
-<tbody id="feeTable"></tbody></table>
+<table><thead><tr><th>Student</th><th>Amount</th><th>Description</th><th>Date</th></tr></thead><tbody id="feeTable"></tbody></table>
 </div>
 </section>
 
 <section id="classes" class="page">
-<h2>Student Promotion & Class Management</h2>
+<h2>CLASS MANAGEMENT</h2>
 <div class="formbox">
-<label>Find Student by Admission Number</label>
-<input id="promotionAdmission" placeholder="Admission number">
-<label>New Class</label>
+<label>Student Admission Number</label>
+<input id="promotionAdmission">
+<label>Select New Class</label>
 <select id="newClass">
-<option>Baby Class</option><option>Middle Class</option>
-<option>Pre-Unit</option><option>Standard One</option>
-<option>Standard Two</option><option>Standard Three</option>
+<option>Baby Class</option><option>Middle Class</option><option>Pre-Unit</option>
+<option>Standard One</option><option>Standard Two</option><option>Standard Three</option>
 <option>Standard Four</option><option>Standard Five</option>
 <option>Standard Six</option><option>Standard Seven</option>
 </select>
-<button class="primary" onclick="changeClass()">Promote Student</button>
-<button class="danger" onclick="changeClass(true)">Return Student to Class</button>
+<button class="primary" onclick="changeClass()">↑ PROMOTE STUDENT</button>
+<button class="danger" onclick="changeClass()">↓ CHANGE / RETURN CLASS</button>
 </div>
-<div class="formbox">
-<h3>Class Records</h3>
-<div id="classRecords"></div>
-</div>
+<div class="formbox"><h3>CLASS RECORDS</h3><div id="classRecords"></div></div>
 </section>
 
 <section id="reports" class="page">
-<h2>School Reports</h2>
+<h2>SCHOOL REPORTS</h2>
 <div class="cards">
 <div class="card">Students<h2 id="reportStudents">0</h2></div>
 <div class="card">Teachers<h2 id="reportTeachers">0</h2></div>
-<div class="card">Total Collections<h2 id="reportFees">0</h2></div>
+<div class="card">Fees<h2 id="reportFees">0</h2></div>
 </div>
-<button class="primary" onclick="window.print()">Print Report</button>
+<button class="primary" onclick="window.print()">PRINT REPORT</button>
 </section>
 
 <section id="settings" class="page">
-<h2>System Settings</h2>
+<h2>SYSTEM SETTINGS</h2>
 <div class="formbox">
-<h3>School Information</h3>
-<p><b>School:</b> ST MOSES SCHOOL</p>
-<p><b>System:</b> ST-MIS</p>
-<p><b>Developer:</b> Moses Freday Lisesi</p>
-<button class="primary" onclick="exportData()">Download Data Backup</button>
+<h3>ST MOSES SCHOOL</h3>
+<p>System Name: ST-MIS</p>
+<p>Developer: Moses Freday Lisesi</p>
+<button class="primary" onclick="exportData()">DOWNLOAD BACKUP</button>
 <label>Restore Backup</label>
-<input type="file" id="backupFile" accept=".json" onchange="importData(event)">
+<input type="file" accept=".json" onchange="importData(event)">
 </div>
 </section>
 
@@ -198,137 +223,113 @@ main{padding:12px}
 let students=JSON.parse(localStorage.getItem('st_students')||'[]');
 let teachers=JSON.parse(localStorage.getItem('st_teachers')||'[]');
 let fees=JSON.parse(localStorage.getItem('st_fees')||'[]');
+const el=id=>document.getElementById(id);
 
+function showPage(id,btn){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+el(id).classList.add('active');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+render();
+}
 function save(){
 localStorage.setItem('st_students',JSON.stringify(students));
 localStorage.setItem('st_teachers',JSON.stringify(teachers));
 localStorage.setItem('st_fees',JSON.stringify(fees));
 render();
 }
-
-function showPage(id,btn){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-render();
-}
-
 function safe(v){
 return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-document.getElementById('studentForm').onsubmit=function(e){
+el('studentForm').onsubmit=e=>{
 e.preventDefault();
-let id=document.getElementById('studentEdit').value;
-let data={
-name:studentName.value.trim(),
-admission:admission.value.trim(),
-cls:studentClass.value,
-gender:gender.value,
-phone:parentPhone.value
-};
-if(id){
-let index=students.findIndex(s=>s.id===id);
-if(index>=0) students[index]= {...students[index],...data};
-}else{
-if(students.some(s=>s.admission===data.admission)){alert('Admission number already exists');return;}
-students.push({id:String(Date.now()),...data});
-}
-this.reset();studentEdit.value='';
-save();
+let id=el('studentEdit').value;
+let data={name:el('studentName').value.trim(),admission:el('admission').value.trim(),cls:el('studentClass').value,gender:el('gender').value,phone:el('parentPhone').value};
+if(!id && students.some(s=>s.admission===data.admission)){alert('Admission number already exists');return;}
+if(id){let i=students.findIndex(s=>s.id===id);if(i>=0)students[i]={...students[i],...data};}
+else students.push({id:String(Date.now()),...data});
+e.target.reset();el('studentEdit').value='';save();
 };
 
 function editStudent(id){
 let s=students.find(x=>x.id===id);if(!s)return;
-studentEdit.value=s.id;studentName.value=s.name;
-admission.value=s.admission;studentClass.value=s.cls;
-gender.value=s.gender;parentPhone.value=s.phone||'';
-document.getElementById('students').scrollIntoView();
+el('studentEdit').value=s.id;
+el('studentName').value=s.name;
+el('admission').value=s.admission;
+el('studentClass').value=s.cls;
+el('gender').value=s.gender;
+el('parentPhone').value=s.phone||'';
 }
-
 function deleteStudent(id){
 if(confirm('Delete this student?')){students=students.filter(s=>s.id!==id);save();}
 }
 
-document.getElementById('teacherForm').onsubmit=function(e){
+el('teacherForm').onsubmit=e=>{
 e.preventDefault();
-teachers.push({id:String(Date.now()),name:teacherName.value,phone:teacherPhone.value,subject:teacherSubject.value});
-this.reset();save();
+teachers.push({id:String(Date.now()),name:el('teacherName').value,phone:el('teacherPhone').value,subject:el('teacherSubject').value});
+e.target.reset();save();
 };
-
 function deleteTeacher(id){
 if(confirm('Delete this teacher?')){teachers=teachers.filter(t=>t.id!==id);save();}
 }
 
-document.getElementById('feeForm').onsubmit=function(e){
+el('feeForm').onsubmit=e=>{
 e.preventDefault();
-fees.push({student:feeStudent.value,amount:Number(feeAmount.value),description:feeDescription.value,date:new Date().toLocaleDateString()});
-this.reset();save();
+fees.push({student:el('feeStudent').value,amount:Number(el('feeAmount').value),description:el('feeDescription').value,date:new Date().toLocaleDateString()});
+e.target.reset();save();
 };
 
-function changeClass(reverse=false){
-let adm=promotionAdmission.value.trim();
-let s=students.find(x=>x.admission===adm);
+function changeClass(){
+let s=students.find(x=>x.admission===el('promotionAdmission').value.trim());
 if(!s){alert('Student not found');return;}
-let old=s.cls;s.cls=newClass.value;
-save();
-alert((reverse?'Class changed back':'Student promoted')+': '+old+' → '+s.cls);
+let old=s.cls;s.cls=el('newClass').value;save();
+alert('Class changed: '+old+' → '+s.cls);
 }
 
 function render(){
-studentCount.textContent=students.length;
-teacherCount.textContent=teachers.length;
-classCount.textContent=new Set(students.map(s=>s.cls)).size;
+el('studentCount').textContent=students.length;
+el('teacherCount').textContent=teachers.length;
+el('classCount').textContent=new Set(students.map(s=>s.cls)).size;
 let total=fees.reduce((a,f)=>a+f.amount,0);
-totalFees.textContent=total.toLocaleString()+' TZS';
-reportStudents.textContent=students.length;
-reportTeachers.textContent=teachers.length;
-reportFees.textContent=total.toLocaleString()+' TZS';
+el('totalFees').textContent=total.toLocaleString()+' TZS';
+el('reportStudents').textContent=students.length;
+el('reportTeachers').textContent=teachers.length;
+el('reportFees').textContent=total.toLocaleString()+' TZS';
 
-studentTable.innerHTML=students.map(s=>`<tr>
-<td>${safe(s.name)}</td><td>${safe(s.admission)}</td>
-<td>${safe(s.cls)}</td><td>${safe(s.gender)}</td>
-<td><button class="primary" onclick="editStudent('${s.id}')">Edit</button>
-<button class="danger" onclick="deleteStudent('${s.id}')">Delete</button></td>
-</tr>`).join('');
+el('studentTable').innerHTML=students.map(s=>`<tr>
+<td>${safe(s.name)}</td><td>${safe(s.admission)}</td><td>${safe(s.cls)}</td><td>${safe(s.gender)}</td>
+<td><button class="primary" onclick="editStudent('${s.id}')">EDIT</button><button class="danger" onclick="deleteStudent('${s.id}')">DELETE</button></td></tr>`).join('');
 
-teacherTable.innerHTML=teachers.map(t=>`<tr>
-<td>${safe(t.name)}</td><td>${safe(t.phone)}</td>
-<td>${safe(t.subject)}</td><td><button class="danger" onclick="deleteTeacher('${t.id}')">Delete</button></td>
-</tr>`).join('');
+el('teacherTable').innerHTML=teachers.map(t=>`<tr>
+<td>${safe(t.name)}</td><td>${safe(t.phone)}</td><td>${safe(t.subject)}</td>
+<td><button class="danger" onclick="deleteTeacher('${t.id}')">DELETE</button></td></tr>`).join('');
 
-feeTable.innerHTML=fees.map(f=>`<tr>
-<td>${safe(f.student)}</td><td>${f.amount.toLocaleString()} TZS</td>
-<td>${safe(f.description)}</td><td>${safe(f.date)}</td></tr>`).join('');
+el('feeTable').innerHTML=fees.map(f=>`<tr>
+<td>${safe(f.student)}</td><td>${f.amount.toLocaleString()} TZS</td><td>${safe(f.description)}</td><td>${safe(f.date)}</td></tr>`).join('');
 
 let classes=[...new Set(students.map(s=>s.cls))];
-classRecords.innerHTML=classes.map(c=>`<p><b>${safe(c)}:</b> ${students.filter(s=>s.cls===c).length} students</p>`).join('')||'No class records yet.';
+el('classRecords').innerHTML=classes.map(c=>`<p>${safe(c)} — ${students.filter(s=>s.cls===c).length} students</p>`).join('')||'No records yet.';
 }
 
 function exportData(){
-let data={students,teachers,fees};
-let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-let a=document.createElement('a');
-a.href=URL.createObjectURL(blob);a.download='ST-MIS-Backup.json';a.click();
-URL.revokeObjectURL(a.href);
+let blob=new Blob([JSON.stringify({students,teachers,fees},null,2)],{type:'application/json'});
+let a=document.createElement('a');a.href=URL.createObjectURL(blob);
+a.download='ST-MIS-Backup.json';a.click();URL.revokeObjectURL(a.href);
 }
-
 function importData(e){
-let file=e.target.files[0];if(!file)return;
 let reader=new FileReader();
-reader.onload=function(){
+reader.onload=()=>{
 try{
 let d=JSON.parse(reader.result);
 if(!Array.isArray(d.students)||!Array.isArray(d.teachers)||!Array.isArray(d.fees))throw Error();
-students=d.students;teachers=d.teachers;fees=d.fees;save();alert('Backup restored successfully');
+students=d.students;teachers=d.teachers;fees=d.fees;save();alert('Backup restored');
 }catch(err){alert('Invalid backup file');}
 };
-reader.readAsText(file);
+reader.readAsText(e.target.files[0]);
 }
-
 render();
 </script>
 </body>
  </html>
-                                                                                   
+ 
