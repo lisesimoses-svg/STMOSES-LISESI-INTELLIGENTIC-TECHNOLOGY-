@@ -1199,6 +1199,175 @@ loginButton.onclick=function(){
 </script>
 <!-- END ST-MIS ADVANCED FEATURES -->
  
+<!-- ST-MIS CLASS, FEE AND EXAM EDIT UPDATE -->
+<script>
+(function(){
+
+// MADARASA: AWALI HADI LA SITA
+const schoolClasses=[
+ "Darasa la Awali",
+ "Darasa la Kwanza",
+ "Darasa la Pili",
+ "Darasa la Tatu",
+ "Darasa la Nne",
+ "Darasa la Tano",
+ "Darasa la Sita"
+];
+
+const classSelect=document.getElementById("studentClass");
+if(classSelect){
+ classSelect.innerHTML=schoolClasses.map(c=>
+  `<option value="${c}">${c}</option>`
+ ).join("");
+}
+
+window.promoteStudent=function(id){
+ const s=db.students.find(x=>x.id===id);
+ if(!s)return;
+ let i=schoolClasses.indexOf(s.className);
+ if(i<0)i=0;
+ if(i<schoolClasses.length-1){
+  s.className=schoolClasses[i+1];
+  saveData();
+  alert("Mwanafunzi amepandishwa: "+s.className);
+ }else{
+  alert("Mwanafunzi yupo Darasa la Sita.");
+ }
+};
+
+window.demoteStudent=function(id){
+ const s=db.students.find(x=>x.id===id);
+ if(!s)return;
+ let i=schoolClasses.indexOf(s.className);
+ if(i<=0){
+  alert("Mwanafunzi yupo Darasa la Awali.");
+  return;
+ }
+ s.className=schoolClasses[i-1];
+ saveData();
+ alert("Mwanafunzi amerudishwa: "+s.className);
+};
+
+// ALAMA YA UFAULU: 50
+window.stxGrade=function(marks){
+ return Number(marks)>=50?"PASS":"FAIL";
+};
+
+// FEE BALANCE: EDIT REQUIRED FEES
+window.stxEditRequiredFee=function(id){
+ const current=Number(db.requiredFees[id]||0);
+ const amount=prompt("Ingiza ada mpya inayotakiwa (TZS):",current);
+ if(amount===null)return;
+ if(amount.trim()===""||!Number.isFinite(Number(amount))||Number(amount)<0){
+  alert("Weka kiasi sahihi cha ada.");
+  return;
+ }
+ db.requiredFees[id]=Number(amount);
+ saveData();
+ drawFeeBalance();
+ alert("Ada inayotakiwa imebadilishwa.");
+};
+
+function drawFeeBalance(){
+ const body=document.getElementById("stxBalanceTable");
+ if(!body)return;
+ body.innerHTML=db.students.map(s=>{
+  const required=Number(db.requiredFees[s.id]||0);
+  const paid=db.fees.filter(f=>Number(f.studentId)===Number(s.id))
+   .reduce((sum,f)=>sum+Number(f.amount||0),0);
+  const balance=Math.max(0,required-paid);
+  return `<tr>
+   <td>${escapeHTML(s.name)}</td>
+   <td>${required.toLocaleString()}</td>
+   <td>${paid.toLocaleString()}</td>
+   <td>${balance.toLocaleString()}</td>
+   <td><button class="action" onclick="stxEditRequiredFee(${s.id})">✏️ EDIT</button></td>
+  </tr>`;
+ }).join("")||'<tr><td colspan="5">Hakuna wanafunzi</td></tr>';
+
+ const table=body.closest("table");
+ if(table){
+  const head=table.querySelector("thead tr");
+  if(head&&!head.innerHTML.includes("EDIT")){
+   head.insertAdjacentHTML("beforeend","<th>EDIT</th>");
+  }
+ }
+}
+
+// EXAMINATIONS: EDIT
+window.stxEditExam=function(id){
+ const e=db.exams.find(x=>x.id===id);
+ if(!e)return;
+
+ const examName=prompt("Jina la mtihani:",e.examName);
+ if(examName===null)return;
+ const subject=prompt("Somo:",e.subject);
+ if(subject===null)return;
+ const marks=prompt("Alama (0 hadi 100):",e.marks);
+ if(marks===null)return;
+
+ if(!examName.trim()||!subject.trim()||
+    marks.trim()===""||!Number.isFinite(Number(marks))||
+    Number(marks)<0||Number(marks)>100){
+  alert("Taarifa si sahihi. Alama ziwe 0 hadi 100.");
+  return;
+ }
+
+ e.examName=examName.trim();
+ e.subject=subject.trim();
+ e.marks=Number(marks);
+ saveData();
+ drawExams();
+ alert("Matokeo yamehaririwa.");
+};
+
+function drawExams(){
+ const body=document.getElementById("stxExamTable");
+ if(!body)return;
+
+ body.innerHTML=db.exams.map(e=>`
+  <tr>
+   <td>${escapeHTML(e.studentName)}</td>
+   <td>${escapeHTML(e.examName)}</td>
+   <td>${escapeHTML(e.subject)}</td>
+   <td>${e.marks}</td>
+   <td style="color:${Number(e.marks)>=50?'#16c784':'#ff7777'}">
+    ${Number(e.marks)>=50?"PASS":"FAIL"}
+   </td>
+   <td>
+    <button class="action" onclick="stxEditExam(${e.id})">✏️ EDIT</button>
+    <button class="action danger" onclick="stxDeleteExam(${e.id})">DELETE</button>
+   </td>
+  </tr>
+ `).join("")||'<tr><td colspan="6">Hakuna matokeo</td></tr>';
+}
+
+// Onyesha alama ya EDIT kwenye vichwa vya jedwali
+const feeTable=document.querySelector("#feeBalance table");
+if(feeTable){
+ const head=feeTable.querySelector("thead tr");
+ if(head&&!head.innerHTML.includes("EDIT")){
+  head.insertAdjacentHTML("beforeend","<th>EDIT</th>");
+ }
+}
+
+// Hakikisha mabadiliko yanaonekana baada ya kuhifadhi
+const oldRenderAll=window.renderAll;
+if(typeof oldRenderAll==="function"){
+ window.renderAll=function(){
+  oldRenderAll();
+  drawFeeBalance();
+  drawExams();
+ };
+}
+
+drawFeeBalance();
+drawExams();
+
+})();
+</script>
+<!-- END ST-MIS CLASS, FEE AND EXAM UPDATE -->
+
 </body>
  </html>
  
