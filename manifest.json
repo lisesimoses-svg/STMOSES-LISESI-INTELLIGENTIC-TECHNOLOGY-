@@ -1,0 +1,9 @@
+{
+  "name": "ST MOSES",
+  "short_name": "ST MOSES",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "ST MOSES School Management System"
+}
