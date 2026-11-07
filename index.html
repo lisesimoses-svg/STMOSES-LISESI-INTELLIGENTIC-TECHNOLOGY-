@@ -2189,6 +2189,125 @@ STUDENT ATTENDANCE
 })();
 </script>
 <!-- END ST-MIS ATTENDANCE -->
+ 
+<!-- ST MOSES CERTIFICATE GENERATOR -->
+<section id="certificates" style="display:none;background:#080d1a;color:white;padding:20px;font-family:Arial">
+
+<h1 style="color:#e9c45a;text-align:center">ST MOSES</h1>
+<h2 style="text-align:center">CERTIFICATE GENERATOR</h2>
+
+<label>Student Full Name</label>
+<input id="certName" placeholder="Enter student name" style="width:100%;padding:12px;margin:8px 0">
+
+<label>Course / Class</label>
+<input id="certCourse" placeholder="Enter course or class" style="width:100%;padding:12px;margin:8px 0">
+
+<label>Completion Date</label>
+<input id="certDate" type="date" style="width:100%;padding:12px;margin:8px 0">
+
+<label>Student Passport Photo</label>
+<input id="certPhoto" type="file" accept="image/*" style="margin:10px 0">
+
+<button onclick="generateCertificate()" style="background:#d6ad42;padding:12px;width:100%;border:0;border-radius:8px;font-weight:bold">
+GENERATE CERTIFICATE
+</button>
+
+<div id="certificatePreview" style="margin-top:25px"></div>
+
+<button onclick="window.print()" style="background:#16834a;color:white;padding:12px;width:100%;margin-top:15px;border:0">
+PRINT / SAVE AS PDF
+</button>
+
+</section>
+
+<script>
+let studentCertificatePhoto = "";
+
+document.getElementById("certPhoto").addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function() {
+    studentCertificatePhoto = reader.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function generateCertificate() {
+  const name = document.getElementById("certName").value.trim();
+  const course = document.getElementById("certCourse").value.trim();
+  const date = document.getElementById("certDate").value;
+
+  if (!name || !course || !date) {
+    alert("Please enter student name, course and completion date.");
+    return;
+  }
+
+  if (!studentCertificatePhoto) {
+    alert("Please upload the student's passport photo.");
+    return;
+  }
+
+  const number = "STM-" + Date.now().toString().slice(-9);
+
+  document.getElementById("certificatePreview").innerHTML = `
+    <div id="printCertificate" style="
+      background:#fffdf4;
+      color:#172c50;
+      border:12px double #bd963d;
+      padding:30px;
+      text-align:center;
+      min-height:440px;
+      box-sizing:border-box;
+      position:relative;
+    ">
+      <h2 style="color:#bd963d">ST MOSES</h2>
+      <p>SCHOOL MANAGEMENT SYSTEM</p>
+      <hr style="border:2px solid #bd963d">
+      <h1 style="font-family:Georgia;color:#172c50">
+        CERTIFICATE OF COMPLETION
+      </h1>
+      <img src="${studentCertificatePhoto}"
+      style="width:100px;height:120px;object-fit:cover;border:3px solid #bd963d">
+      <p>This certificate is proudly presented to</p>
+      <h2 style="text-decoration:underline">${escapeHTML(name)}</h2>
+      <p>For successfully completing the course/class</p>
+      <h3>${escapeHTML(course)}</h3>
+      <p>Completion Date: ${escapeHTML(date)}</p>
+      <p>Certificate No: ${number}</p>
+      <div style="display:flex;justify-content:space-between;margin-top:45px">
+        <div>_________________<br>Principal Signature</div>
+        <div>_________________<br>School Stamp</div>
+      </div>
+      <p style="font-size:11px;color:#777">ST MOSES | Certificate Record</p>
+    </div>
+  `;
+
+  window.currentCertificateNumber = number;
+}
+
+function escapeHTML(value) {
+  return value.replace(/[&<>"']/g, function(c) {
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+</script>
+
+<style>
+@media print {
+  body * { visibility:hidden !important; }
+  #printCertificate, #printCertificate * { visibility:visible !important; }
+  #printCertificate {
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    min-height:95vh;
+  }
+}
+</style>
+ 
     
 </body>
  </html>
