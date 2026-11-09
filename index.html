@@ -2308,6 +2308,165 @@ function escapeHTML(value) {
 }
 </style>
  
+<!-- ST-MIS AUTOMATIC STUDENT PHOTO -->
+<div class="student-photo-box">
+  <h3>Student Passport Photo</h3>
+
+  <label for="studentPhotoAI">
+    Choose Student Photo
+  </label>
+
+  <input
+    type="file"
+    id="studentPhotoAI"
+    accept="image/*"
+  >
+
+  <p id="photoStatus">Select a student photo</p>
+
+  <div class="student-passport">
+    <img id="studentPhotoPreview" alt="Student passport photo">
+  </div>
+
+  <button type="button" id="saveStudentPhotoAI">
+    Save Student Photo
+  </button>
+</div>
+
+<style>
+.student-photo-box {
+  background: #171717;
+  color: #ffd700;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  margin: 15px 0;
+}
+
+.student-photo-box input {
+  display: block;
+  width: 100%;
+  margin: 15px 0;
+  color: white;
+}
+
+.student-passport {
+  width: 150px;
+  height: 190px;
+  margin: 15px auto;
+  background: #00008b;
+  overflow: hidden;
+}
+
+.student-passport img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+#saveStudentPhotoAI {
+  background: #00008b;
+  color: white;
+  border: 1px solid #ffd700;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+</style>
+
+<script type="module">
+import removeBackground from
+  "https://esm.sh/@imgly/background-removal@1.7.0";
+
+const input = document.getElementById("studentPhotoAI");
+const preview = document.getElementById("studentPhotoPreview");
+const status = document.getElementById("photoStatus");
+
+let finalStudentPhoto = null;
+
+input.addEventListener("change", async () => {
+  const file = input.files[0];
+  if (!file) return;
+
+  try {
+    status.textContent = "AI is removing background... Please wait";
+
+    const transparentImage = await removeBackground(file, {
+      model: "medium",
+      output: {
+        format: "image/png",
+        quality: 0.9
+      }
+    });
+
+    const image = new Image();
+    const imageURL = URL.createObjectURL(transparentImage);
+
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 600;
+      canvas.height = 800;
+
+      const ctx = canvas.getContext("2d");
+
+      // Dark blue background
+      ctx.fillStyle = "#00008B";
+      ctx.fillRect(0, 0, 600, 800);
+
+      // Fit the student into passport frame
+      const scale = Math.min(
+        600 / image.width,
+        800 / image.height
+      );
+
+      const width = image.width * scale;
+      const height = image.height * scale;
+
+      ctx.drawImage(
+        image,
+        (600 - width) / 2,
+        (800 - height) / 2,
+        width,
+        height
+      );
+
+      finalStudentPhoto = canvas.toDataURL("image/jpeg", 0.92);
+
+      preview.src = finalStudentPhoto;
+      preview.style.display = "block";
+
+      status.textContent = "Dark Blue background applied!";
+      URL.revokeObjectURL(imageURL);
+    };
+
+    image.onerror = () => {
+      status.textContent = "Could not load processed photo.";
+      URL.revokeObjectURL(imageURL);
+    };
+
+    image.src = imageURL;
+
+  } catch (error) {
+    console.error(error);
+    status.textContent =
+      "AI processing failed. Check internet and try again.";
+  }
+});
+
+document.getElementById("saveStudentPhotoAI")
+.addEventListener("click", () => {
+  if (!finalStudentPhoto) {
+    alert("Please select and process a photo first.");
+    return;
+  }
+
+  const link = document.createElement("a");
+  link.href = finalStudentPhoto;
+  link.download = "ST-MIS-Student-Passport.jpg";
+  link.click();
+});
+</script>
+ 
     
 </body>
  </html>
